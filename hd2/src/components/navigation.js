@@ -8,17 +8,15 @@ import { faRankingStar } from "@fortawesome/free-solid-svg-icons/faRankingStar";
 import { faSeedling } from "@fortawesome/free-solid-svg-icons/faSeedling";
 import { usePathname, useRouter } from "next/navigation";
 
-
 export default function Navbar() {
   const pathname = usePathname();
-
 
   const isNavItemActive = (pathToCheck, actualPath) => {
     return pathToCheck === actualPath;
   };
 
   return (
-    <nav className="btm-nav bg-base-100">
+    <nav className="navbar bg-base-100">
       <ul className="menu menu-horizontal">
         <li>
           <Link
