@@ -63,17 +63,17 @@ export default function Home() {
             }}
           >
             <div className="relative border p-2 rounded-xl">
-                <input
-                    className="w-full pl-2 pr-8 py-2 outline-none"
-                    type="text"
-                    placeholder="Ask Shitter for Notes"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <FontAwesomeIcon
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 opacity-70"
-                    icon={faMagnifyingGlass}
-                />
+              <input
+                className="w-full pl-2 pr-8 py-2 outline-none"
+                type="text"
+                placeholder="Ask Shitter for Notes"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <FontAwesomeIcon
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 opacity-70"
+                icon={faMagnifyingGlass}
+              />
             </div>
           </form>
         ) : (
@@ -94,8 +94,8 @@ export default function Home() {
         </button>
       </main>
       {/* Notes */}
-      <div className="mt-12 w-full max-w-screen-2xl max-h-content" role="group">
-        <ul className="w-full flex gap-x-2 gap-y-2 flex-wrap items-center justify-center overflow-y-auto max-w-screen-2xl">
+      <div className="mt-12 mx-8 max-w-screen-2xl max-h-content" role="group">
+        <ul className="flex gap-x-2 gap-y-2 flex-wrap items-center justify-center overflow-y-auto max-w-screen-2xl rounded-2xl bg-gray-200 px-2 py-4">
           <li>
             <div class="card w-72 bg-base-100 shadow-xl">
               <figure>

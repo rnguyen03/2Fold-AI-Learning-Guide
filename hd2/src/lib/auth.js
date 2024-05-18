@@ -1,16 +1,21 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import { FirestoreAdapter } from "@auth/firebase-adapter";
+import { app } from "@/app/firebase";
 
-const providers = [Google];
-
-export const providerMap = providers.map((provider) => {
-  if (typeof provider === "function") {
-    const providerData = provider();
-    return { id: providerData.id, name: providerData.name };
-  } else {
-    return { id: provider.id, name: provider.name };
-  }
-});
+const providers = [
+  Google({
+    async profile(profile) {
+      return {
+        id: profile.id,
+        email: profile.email,
+        name: profile.name,
+        image: profile.image,
+        notes: [],
+      };
+    },
+  }),
+];
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers,
@@ -20,11 +25,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/auth/sign-in",
   },
-  // adapter: FirestoreAdapter({
-  //   credential: cert({
-  //     projectId: process.env.AUTH_FIREBASE_PROJECT_ID,
-  //     clientEmail: process.env.AUTH_FIREBASE_CLIENT_EMAIL,
-  //     privateKey: process.env.AUTH_FIREBASE_PRIVATE_KEY,
-  //   }),
-  // }),
+  adapter: FirestoreAdapter(app),
 });
