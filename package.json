@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "codemirror": "^5.65.16",
+    "simplemde": "^1.11.2"
+  }
+}

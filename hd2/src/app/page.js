@@ -62,21 +62,19 @@ export default function Home() {
               setIsLoading(false);
             }}
           >
-            <label class="input input-bordered flex items-center gap-2">
-              <input
-                type="text"
-                class="grow"
-                placeholder="Ask Shitter for Notes"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                }}
-              />
-              <FontAwesomeIcon
-                className="w-4 h-4 opacity-70"
-                icon={faMagnifyingGlass}
-              />
-            </label>
+            <div className="relative border p-2 rounded-xl">
+                <input
+                    className="w-full pl-2 pr-8 py-2 outline-none"
+                    type="text"
+                    placeholder="Ask Shitter for Notes"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <FontAwesomeIcon
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 opacity-70"
+                    icon={faMagnifyingGlass}
+                />
+            </div>
           </form>
         ) : (
           <>
