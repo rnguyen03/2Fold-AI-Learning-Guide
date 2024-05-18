@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { DB } from '@/app/firebase';
 
 // Function to create a new note
@@ -57,5 +57,19 @@ export const deleteNote = async (docId) => {
     await deleteDoc(docRef);
   } catch (e) {
     console.error("Error deleting note: ", e);
+  }
+};
+
+// Function to get a single note by ID
+export const getNoteById = async (noteId) => {
+  try {
+    const noteDoc = await getDoc(doc(DB, 'notes', noteId));
+    if (noteDoc.exists()) {
+      return { id: noteDoc.id, ...noteDoc.data() };
+    } else {
+      throw new Error("Note not found");
+    }
+  } catch (e) {
+    console.error("Error getting note: ", e);
   }
 };
