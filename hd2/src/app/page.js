@@ -1,8 +1,6 @@
 "use server";
-import { auth, signOut } from "@/lib/auth";
 import Link from "next/link";
-import MyDropzone from "@/components/dropFile";
-import { redirect } from "next/navigation";
+import { auth, signOut } from "@/lib/auth";
 
 export default async function Home() {
   const session = await auth();
@@ -18,7 +16,6 @@ export default async function Home() {
         >
           Go Login
         </Link>
-        <Link></Link>
         {session?.user && (
           <>
             <form
