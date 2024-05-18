@@ -10,6 +10,7 @@ export default async function Home() {
     <main className="flex flex-col gapy-y-4 justify-center items-center px-12">
       <h1>Welcome to the homepage!</h1>
       <p>User is {!session?.user && "NOT"} logged in</p>
+      
       <Link className="bg-slate-400 rounded-3xl px-4 py-2" href="/auth/sign-in">
         Go Login
       </Link>
