@@ -2,6 +2,7 @@
 import { auth, signOut } from "@/lib/auth";
 import Link from "next/link";
 import Navbar from "@/components/navigation";
+
 export default async function Home() {
   const session = await auth();
 
@@ -32,3 +33,6 @@ export default async function Home() {
     </>
   );
 }
+
+
+

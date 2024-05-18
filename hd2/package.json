@@ -14,10 +14,14 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.1",
+    "@react-three/fiber": "^8.16.6",
+    "firebase": "^10.12.0",
     "next": "14.2.3",
     "next-auth": "^5.0.0-beta.18",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "simplemde": "^1.11.2",
+    "three": "^0.164.1"
   },
   "devDependencies": {
     "daisyui": "^4.11.1",
