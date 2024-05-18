@@ -46,7 +46,7 @@ export default function Home() {
           className="z-20"
           style={{ position: "relative", width: "100%", height: "100%" }}
         >
-          <ThreeTiger />
+          <ThreeRabbit />
           <ThreeSetup />
         </div>
         {/* <div className=" w-[200px] h-[200px] bg-red-200"></div> */}
