@@ -1,11 +1,13 @@
 "use server";
 import { auth, signOut } from "@/lib/auth";
 import Link from "next/link";
-
+import Navbar from "@/components/navigation";
 export default async function Home() {
   const session = await auth();
 
   return (
+    <>
+    <Navbar/>
     <main className="flex flex-col gapy-y-4 justify-center items-center px-12">
       <h1>Welcome to the homepage!</h1>
       <p>User is {!session?.user && "NOT"} logged in</p>
@@ -27,5 +29,6 @@ export default async function Home() {
         </>
       )}
     </main>
+    </>
   );
 }
