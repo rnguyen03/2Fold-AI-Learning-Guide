@@ -61,7 +61,7 @@ const UploadPage = () => {
 
                 // Call gpt to summarize the content
                 const res = await axios.post('/api/core/chatgpt', { prompt });
-                const summary = { content: res.data.response.choices[0].message.content };
+                const summary = res.data.response.choices[0].message.content;
 
                 // Add note metadata and content to Firestore
                 const newNoteRef = await addDoc(collection(DB, 'notes'), {

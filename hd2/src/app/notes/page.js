@@ -1,28 +1,24 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { createNote, getUserNotes, getNoteById, updateNote } from '../api/core/notes/route'; // Ensure correct import path
+import axios from 'axios';
 import SimpleMDEEditor from '@/components/SimpleMDEEditor';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import ChatGPT from '@/components/ChatGPT';
 import { v4 as uuidv4 } from 'uuid';
 import { useSession } from 'next-auth/react';
-import axios from 'axios';
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [sessionId, setSessionId] = useState(uuidv4());
-  const session = useSession();
+  const { data: session } = useSession();
 
   const fetchNotes = async () => {
-    console.log(session);
-    const email = session.data?.user?.email;
-    if (!email) return;
+    if (!session?.user?.email) return;
 
     try {
-      const response = await axios.get(`/api/core/notes/user/${email}`);
-      console.log("Fetched notes:", response.data);
+      const response = await axios.get(`/api/core/notes/user/${session.user.email}`);
       setNotes(response.data);
     } catch (error) {
       console.error("Error fetching notes:", error);
@@ -30,16 +26,18 @@ export default function Notes() {
   };
 
   const handleNoteClick = async (noteId) => {
-    const note = await getNoteById(noteId);
-    console.log("Selected note:", note);
+    const note = notes.find(note => note.id === noteId);
     setSelectedNote(note);
   };
 
   const handleSave = async () => {
     await fetchNotes();
-    // Keep the current note selected
-    const updatedNote = await getNoteById(selectedNote.id);
+    const updatedNote = notes.find(note => note.id === selectedNote.id);
     setSelectedNote(updatedNote);
+  };
+
+  const handleCreateNewNote = () => {
+    setSelectedNote({ id: null, title: '', content: '' });
   };
 
   useEffect(() => {
@@ -49,6 +47,9 @@ export default function Notes() {
   return (
     <PanelGroup autoSaveId="persistence" direction="horizontal">
       <Panel defaultSize={30} minSize={20}>
+        <button onClick={handleCreateNewNote} className="btn btn-primary mb-2">
+          Create New Note
+        </button>
         <ul>
           {notes.map((note) => (
             <li key={note.id} onClick={() => handleNoteClick(note.id)}>
@@ -61,6 +62,7 @@ export default function Notes() {
       <Panel minSize={30}>
         {selectedNote && (
           <SimpleMDEEditor
+            key={selectedNote.id} // Adding a key here to force re-render
             noteId={selectedNote.id}
             title={selectedNote.title}
             content={selectedNote.content}
