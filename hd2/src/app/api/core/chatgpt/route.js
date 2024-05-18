@@ -1,6 +1,31 @@
-// src/app/api/core/chatgpt/route.js
 import axios from 'axios';
 import { NextResponse } from 'next/server';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { DB } from '@/app/firebase';
+
+// Function to add a message to the session
+export const addMessageToSession = async (sessionId, message) => {
+  try {
+    await addDoc(collection(DB, 'sessions', sessionId, 'messages'), message);
+  } catch (e) {
+    console.error("Error adding message: ", e);
+  }
+};
+
+// Function to get messages for a session
+export const getSessionChat = async (sessionId) => {
+  try {
+    const q = query(collection(DB, 'sessions', sessionId, 'messages'));
+    const querySnapshot = await getDocs(q);
+    const messages = [];
+    querySnapshot.forEach((doc) => {
+      messages.push(doc.data());
+    });
+    return messages;
+  } catch (e) {
+    console.error("Error getting session chat: ", e);
+  }
+};
 
 export async function POST(req) {
   const { prompt } = await req.json();
@@ -25,7 +50,6 @@ export async function POST(req) {
     );
 
     console.log(response.data);
-    console.log(response.data.choices[0].message);
 
     return new NextResponse(JSON.stringify({ response: response.data }), {
       status: 200,

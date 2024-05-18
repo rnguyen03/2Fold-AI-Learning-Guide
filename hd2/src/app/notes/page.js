@@ -5,10 +5,12 @@ import { createNote, getUserNotes, getNoteById, updateNote } from '../api/core/n
 import SimpleMDEEditor from '@/components/SimpleMDEEditor';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import ChatGPT from '@/components/ChatGPT';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
+  const [sessionId, setSessionId] = useState(uuidv4());
   const userId = 'exampleUserId'; // Replace with the actual user ID
 
   const fetchNotes = async () => {
@@ -56,7 +58,7 @@ export default function Notes() {
       </Panel>
       <PanelResizeHandle />
       <Panel defaultSize={30} minSize={20}>
-        <ChatGPT />
+        <ChatGPT sessionId={sessionId} />
       </Panel>
     </PanelGroup>
   );
