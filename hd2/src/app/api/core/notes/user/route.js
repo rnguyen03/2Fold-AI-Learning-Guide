@@ -1,29 +1,22 @@
-/**
- * This file supports the following methods:
- * POST - Adds a singular Note wrt user
- * Sample Usage: axios.post("/api/core/notes/user", data)
- */
-
 import {
   collection,
   addDoc,
   getDocs,
   doc,
   updateDoc,
-  deleteDoc,
   query,
   where,
 } from "firebase/firestore";
-import { DB } from "@/app/firebase";
 import { NextResponse } from "next/server";
+import { DB } from "@/app/firebase"; // Adjust the path to your firebase configuration
 
-// Adds a new note
 export async function POST(req, res) {
   const data = await req.json();
-  const { email, marker, summary, tag, title } = data; // Get the users email
-  // if (!email || !marker || !summary || !tag || !title) {
-  //   return new NextResponse(JSON.stringify({ err: "one of the fields of the body was empty" }), { status: 409 })
-  // }
+  const { content, marker, summary, tag, title } = data;
+
+  if (!content || !marker || !summary || !tag || !title) {
+    return new NextResponse(JSON.stringify({ err: "one of the fields of the body was empty" }), { status: 409 });
+  }
 
   try {
     // Get the current user
@@ -48,10 +41,12 @@ export async function POST(req, res) {
       summary,
       tag,
       title,
+      fileContent,
       userId: currentUser,
+      uploadedAt: new Date(),
     });
 
-    // Also update the current users list of notes (id)
+    // Also update the current user's list of notes (id)
     await updateDoc(doc(DB, "users", currentUser), {
       notes: [...currentUserData.notes, newNote.id],
     });

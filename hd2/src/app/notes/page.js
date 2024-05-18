@@ -6,20 +6,32 @@ import SimpleMDEEditor from '@/components/SimpleMDEEditor';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import ChatGPT from '@/components/ChatGPT';
 import { v4 as uuidv4 } from 'uuid';
+import { useSession } from 'next-auth/react';
+import axios from 'axios';
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [sessionId, setSessionId] = useState(uuidv4());
-  const userId = 'exampleUserId'; // Replace with the actual user ID
+  const session = useSession();
 
   const fetchNotes = async () => {
-    const userNotes = await getUserNotes(userId);
-    setNotes(userNotes);
+    console.log(session);
+    const email = session.data?.user?.email;
+    if (!email) return;
+
+    try {
+      const response = await axios.get(`/api/core/notes/user/${email}`);
+      console.log("Fetched notes:", response.data);
+      setNotes(response.data);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    }
   };
 
   const handleNoteClick = async (noteId) => {
     const note = await getNoteById(noteId);
+    console.log("Selected note:", note);
     setSelectedNote(note);
   };
 
@@ -32,7 +44,7 @@ export default function Notes() {
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [session]);
 
   return (
     <PanelGroup autoSaveId="persistence" direction="horizontal">
