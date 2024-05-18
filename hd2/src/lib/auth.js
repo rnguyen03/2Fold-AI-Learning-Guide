@@ -14,6 +14,7 @@ const providers = [
         notes: [],
       };
     },
+    allowDangerousEmailAccountLinking: true,
   }),
 ];
 
