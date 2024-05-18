@@ -7,6 +7,7 @@ import { faPowerOff } from "@fortawesome/free-solid-svg-icons/faPowerOff";
 import { faRankingStar } from "@fortawesome/free-solid-svg-icons/faRankingStar";
 import { faSeedling } from "@fortawesome/free-solid-svg-icons/faSeedling";
 import { usePathname, useRouter } from "next/navigation";
+import SignInOutButton from "./SignInOutButton";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -17,7 +18,7 @@ export default function Navbar() {
 
   return (
     <nav className="navbar bg-base-100">
-      <ul className="menu menu-horizontal">
+      <ul className="menu menu-horizontal w-full">
         <li>
           <Link
             className={isNavItemActive("/", pathname) ? "active" : ""}
@@ -68,13 +69,8 @@ export default function Navbar() {
             Growth
           </Link>
         </li>
-        {/* <li>
-          <button onClick={() => signout()}>
-            <FontAwesomeIcon icon={faPowerOff} />
-            Logout
-          </button>
-        </li> */}
       </ul>
+      <SignInOutButton />
     </nav>
   );
 }

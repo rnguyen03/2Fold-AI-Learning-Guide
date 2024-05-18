@@ -1,17 +1,21 @@
-import { signIn } from "@/lib/auth";
+"use client";
 
-export default function GoogleButton({ provider }) {
+import { signIn } from "next-auth/react";
+
+export default function GoogleButton() {
   return (
     <form
-      className="flex flex-col"
-      key={provider.id}
-      action={async () => {
-        "use server";
-        await signIn(provider.id, { redirectTo: "/" });
+      className=""
+      key={"google"}
+      action={() => {
+        signIn("google", { redirectTo: "/" });
       }}
     >
-      <button className="bg-slate-400 rounded-3xl py-2 px-4" type="submit">
-        <span>Sign in with {provider.name}</span>
+      <button
+        className="bg-slate-400 rounded-3xl py-2 px-4 whitespace-nowrap"
+        type="submit"
+      >
+        <span>Sign in with Google</span>
       </button>
     </form>
   );
