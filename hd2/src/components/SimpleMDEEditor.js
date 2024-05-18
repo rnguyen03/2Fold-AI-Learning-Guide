@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
-import SimpleMDE from 'simplemde';
-import 'simplemde/dist/simplemde.min.css';
-import { addDoc, collection, doc, updateDoc, query, where, getDocs } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
+import SimpleMDE from "simplemde";
+import "simplemde/dist/simplemde.min.css";
+import {
+  addDoc,
+  collection,
+  doc,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { DB } from "@/app/firebase"; // Ensure correct import path
-import { useSession } from 'next-auth/react';
-import axios from 'axios';
+import { useSession } from "next-auth/react";
+import axios from "axios";
+
+import "@/app/globals.css";
 
 const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
   const textareaRef = useRef(null);
@@ -30,7 +40,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
         spellChecker: false,
       });
 
-      simpleMdeRef.current.codemirror.on('change', () => {
+      simpleMdeRef.current.codemirror.on("change", () => {
         setEditorContent(simpleMdeRef.current.value());
       });
     }
@@ -49,7 +59,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     const prompt = `Please briefly summarize the following content:\n\n${editorContent}`;
 
     // Call gpt to summarize the content
-    const res = await axios.post('/api/core/chatgpt', { prompt });
+    const res = await axios.post("/api/core/chatgpt", { prompt });
     const summary = res.data.response.choices[0].message.content;
 
     const noteData = {
@@ -62,15 +72,18 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
 
     if (noteId) {
       // Update existing note
-      await updateDoc(doc(DB, 'notes', noteId), noteData);
+      await updateDoc(doc(DB, "notes", noteId), noteData);
     } else {
       // Create new note
-      const newNoteRef = await addDoc(collection(DB, 'notes'), noteData);
+      const newNoteRef = await addDoc(collection(DB, "notes"), noteData);
       noteData.id = newNoteRef.id;
 
       // Fetch the current user's data
       const email = session.user.email;
-      const userQuery = query(collection(DB, "users"), where("email", "==", email));
+      const userQuery = query(
+        collection(DB, "users"),
+        where("email", "==", email)
+      );
       const userSnapshot = await getDocs(userQuery);
       let currentUser;
       let currentUserData;
@@ -97,8 +110,10 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
         placeholder="Note Title"
         className="input input-bordered w-full mb-2"
       />
-      <textarea ref={textareaRef}></textarea>
-      <button onClick={handleSave} className="btn btn-primary mt-2">Save</button>
+      <textarea style={{ height: "100px" }} ref={textareaRef} />
+      <button onClick={handleSave} className="btn btn-primary mt-2">
+        Save
+      </button>
     </div>
   );
 };

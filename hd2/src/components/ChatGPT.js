@@ -1,66 +1,96 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import { getSessionChat, addMessageToSession } from '@/app/api/core/chatgpt/route'; // Ensure correct import path
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+
+const GPTResponse = ({ response }) => {
+  return (
+    <div className="chat chat-start w-full">
+      <div className="chat-bubble">{response}</div>
+    </div>
+  );
+};
+
+const UserPrompt = ({ prompt }) => {
+  return (
+    <div className="chat chat-end w-full">
+      <div className="chat-bubble">{prompt}</div>
+    </div>
+  );
+};
+
+const MessageSet = ({ msg }) => {
+  return (
+    <>
+      <GPTResponse response={msg.response} />
+      <UserPrompt prompt={msg.prompt} />
+    </>
+  );
+};
 
 export default function ChatGPT() {
-  const [prompt, setPrompt] = useState('');
-  const [chatMessages, setChatMessages] = useState([]);
-  const [sessionId, setSessionId] = useState(uuidv4());
+  const [prompt, setPrompt] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch chat messages for the current session when the component mounts
-    const fetchChatMessages = async () => {
-      const messages = await getSessionChat(sessionId);
-      setChatMessages(messages);
-    };
-    fetchChatMessages();
-  }, [sessionId]);
+    let objDiv = document.getElementById("messages-list");
+    objDiv.scrollTop = objDiv.scrollHeight;
+  }, [messages]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Pressed the button!");
-
-    const userMessage = { role: 'user', content: prompt };
-    setChatMessages([...chatMessages, userMessage]);
-    setPrompt('');
 
     try {
-      const res = await axios.post('/api/core/chatgpt', { prompt });
-      console.log("Response data:", res.data);
-      const botMessage = { role: 'assistant', content: res.data.response.choices[0].message.content };
-      setChatMessages([...chatMessages, userMessage, botMessage]);
+      setIsLoading(true);
+      const res = await axios.post("/api/core/chatgpt", { prompt });
+      const message = {
+        response: res.data.response.choices[0].message.content,
+        prompt,
+      };
 
-      // Save both user and bot messages to the session
-      await addMessageToSession(sessionId, userMessage);
-      await addMessageToSession(sessionId, botMessage);
+      setMessages([...messages, message]);
+      setIsLoading(false);
+      setPrompt("");
     } catch (error) {
-      console.error('Error fetching response:', error);
-      const errorMessage = { role: 'assistant', content: 'An error occurred while fetching the response.' };
-      setChatMessages([...chatMessages, userMessage, errorMessage]);
-      await addMessageToSession(sessionId, errorMessage);
+      console.error("Error fetching response:", error);
+      const message = {
+        response: "An error occurred while fetching the response.",
+        prompt,
+      };
+      setMessages([...messages, message]);
     }
   };
 
   return (
-    <div>
-      <div>
-        {chatMessages.map((message, index) => (
-          <div key={index} className={message.role}>
-            <strong>{message.role === 'user' ? 'You' : 'Bot'}:</strong> <p>{message.content}</p>
-          </div>
+    <div className="flex h-full justify-between flex-col bg-info rounded-2xl">
+      <div id="messages-list" className="overflow-y-auto">
+        {messages.map((msg, index) => (
+          <MessageSet key={index} msg={msg} />
         ))}
+        {isLoading && (
+          <span class="loading loading-dots loading-lg self-center" />
+        )}
       </div>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          rows="4"
-          cols="50"
-        />
-        <button type="submit">Send</button>
+      <form className="flex flex-col mb-2 mx-2" onSubmit={handleSubmit}>
+        <label class="flex justify-center items-center">
+          <input
+            className="input input-bordered grow resize-none h-16 "
+            placeholder="Message your Critter"
+            value={prompt}
+            disabled={isLoading}
+            onChange={(e) => setPrompt(e.target.value)}
+          />
+          <button
+            className={`btn btn-circle btn-outline border-none absolute left-auto right-6`}
+            type="submit"
+            disabled={isLoading}
+          >
+            <FontAwesomeIcon icon={faPaperPlane} />
+          </button>
+        </label>
       </form>
     </div>
   );

@@ -6,3 +6,12 @@ body {
   margin: 0;
 }
 
+.CodeMirror {
+  max-height: 250px;
+  min-height: 250px;
+}
+
+.CodeMirror-scroll {
+  max-height: 250px;
+  min-height: 250px;
+}
