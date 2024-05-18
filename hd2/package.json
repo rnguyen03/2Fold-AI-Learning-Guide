@@ -18,7 +18,7 @@
     "@react-three/drei": "^9.105.6",
     "@react-three/fiber": "^8.16.6",
     "axios": "^1.6.8",
-    "codemirror": "^5.65.16",
+    "codemirror": "^6.0.1",
     "easymde": "^2.18.0",
     "firebase": "^10.12.0",
     "next": "14.2.3",
