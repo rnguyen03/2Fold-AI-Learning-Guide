@@ -1,5 +1,3 @@
-// src/components/ChatGPT.js
-
 "use client";
 
 import { useState } from 'react';
@@ -15,7 +13,8 @@ export default function ChatGPT() {
 
     try {
       const res = await axios.post('/api/core/chatgpt', { prompt });
-      setResponse(res.data.response.choices[0].text);
+      console.log("Response data:", res.data);
+      setResponse(res.data.response.choices[0].message.content);
     } catch (error) {
       console.error('Error fetching response:', error);
       setResponse('An error occurred while fetching the response.');

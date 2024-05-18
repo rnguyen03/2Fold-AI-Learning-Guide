@@ -10,7 +10,7 @@ export async function POST(req) {
       'https://api.openai.com/v1/chat/completions',
       {
         model: 'gpt-3.5-turbo',
-        prompt: prompt,
+        messages: [{ role: 'user', content: prompt }],
         max_tokens: 150,
         n: 1,
         stop: null,
@@ -25,6 +25,7 @@ export async function POST(req) {
     );
 
     console.log(response.data);
+    console.log(response.data.choices[0].message);
 
     return new NextResponse(JSON.stringify({ response: response.data }), {
       status: 200,
