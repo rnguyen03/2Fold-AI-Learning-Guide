@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useRef } from 'react';
 import { collection, addDoc, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import { DB } from "@/app/firebase"; // Adjust the path to your firebase configuration
@@ -9,8 +9,9 @@ const UploadPage = () => {
     const [file, setFile] = useState(null);
     const [fileName, setFileName] = useState('No file chosen');
     const [title, setTitle] = useState('');
+    const [marker, setMarker] = useState('');
     const fileInputRef = useRef(null);
-    const session = useSession();
+    const { data: session } = useSession();
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -29,6 +30,10 @@ const UploadPage = () => {
         fileInputRef.current.click();
     };
 
+    const handleMarkerClick = (selectedMarker) => {
+        setMarker(selectedMarker);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!file) {
@@ -36,11 +41,18 @@ const UploadPage = () => {
             return;
         }
 
+        if (!marker) {
+            alert('Please select a marker.');
+            return;
+        }
+
         try {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const content = e.target.result;
-                const email = session.data.user.email;
+                console.log("File content:", content);  // Debugging step
+
+                const email = session.user.email;
 
                 // Fetch user data
                 const userQuery = query(collection(DB, "users"), where("email", "==", email));
@@ -59,7 +71,7 @@ const UploadPage = () => {
                 // Prepare the prompt for GPT summarization
                 const prompt = `Please briefly summarize the following content:\n\n${content}`;
 
-                // Call gpt to summarize the content
+                // Call GPT to summarize the content
                 const res = await axios.post('/api/core/chatgpt', { prompt });
                 const summary = res.data.response.choices[0].message.content;
 
@@ -67,7 +79,7 @@ const UploadPage = () => {
                 const newNoteRef = await addDoc(collection(DB, 'notes'), {
                     title: title,
                     content: content,
-                    marker: 'marker',
+                    marker: marker,
                     tag: 'tag',
                     summary: summary,
                 });
@@ -81,6 +93,7 @@ const UploadPage = () => {
                 setFileName('No file chosen');
                 setTitle('');
                 setFile(null);
+                setMarker('');
             };
 
             reader.readAsText(file);
@@ -121,6 +134,29 @@ const UploadPage = () => {
                         onChange={(e) => setTitle(e.target.value)}
                         required
                     />
+                </div>
+                <div className="flex justify-center mb-4">
+                    <button
+                        type="button"
+                        onClick={() => handleMarkerClick('Crane')}
+                        className={`btn mr-2 ${marker === 'Crane' ? 'btn-selected' : ''}`}
+                    >
+                        Crane
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleMarkerClick('Ox')}
+                        className={`btn mr-2 ${marker === 'Ox' ? 'btn-selected' : ''}`}
+                    >
+                        Ox
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleMarkerClick('Tiger')}
+                        className={`btn ${marker === 'Tiger' ? 'btn-selected' : ''}`}
+                    >
+                        Tiger
+                    </button>
                 </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
