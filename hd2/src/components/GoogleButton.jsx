@@ -1,5 +1,7 @@
 "use client";
 
+import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { signIn } from "next-auth/react";
 
 export default function GoogleButton() {
@@ -11,11 +13,9 @@ export default function GoogleButton() {
         signIn("google", { redirectTo: "/" });
       }}
     >
-      <button
-        className="bg-slate-400 rounded-3xl py-2 px-4 whitespace-nowrap"
-        type="submit"
-      >
-        <span>Sign in with Google</span>
+      <button className="btn" type="submit">
+        <span>Sign in</span>
+        <FontAwesomeIcon icon={faArrowRightToBracket} />
       </button>
     </form>
   );

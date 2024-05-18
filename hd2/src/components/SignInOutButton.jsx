@@ -3,6 +3,8 @@
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import GoogleButton from "./GoogleButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function SignInOutButton() {
   const { data: session, status } = useSession();
@@ -17,10 +19,11 @@ export default function SignInOutButton() {
             }}
           >
             <button
-              className="bg-red-400 rounded-3xl px-4 py-2 whitespace-nowrap"
+              className="btn btn-ghost item whitespace-nowrap"
               type="submit"
             >
               Sign Out
+              <FontAwesomeIcon icon={faArrowRightFromBracket} />
             </button>
           </form>
         </>

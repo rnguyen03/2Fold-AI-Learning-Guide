@@ -13,6 +13,12 @@ module.exports = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      height: {
+        content: "calc(100vh - 4.250rem)",
+      },
+      maxHeight: {
+        content: "calc(100% - 4.250rem)",
+      },
     },
   },
   plugins: [daisyui],

@@ -17,56 +17,53 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="navbar bg-base-100">
-      <ul className="menu menu-horizontal w-full">
+    <nav className="navbar w-full bg-base-100">
+      <button className="btn">BBC</button>
+      <ul className="menu menu-horizontal w-[90%] flex justify-end">
         <li>
           <Link
             className={isNavItemActive("/", pathname) ? "active" : ""}
             href="/"
           >
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               icon={faHouse}
               className={
                 isNavItemActive("/", pathname) ? "text-primary" : "neutral"
               }
-            />
+            /> */}
             Home
           </Link>
         </li>
 
         <li>
           <Link
-            className={
-              isNavItemActive("/leaderboard", pathname) ? "active" : ""
-            }
-            href="/leaderboard"
+            className={isNavItemActive("/notes", pathname) ? "active" : ""}
+            href="/notes"
           >
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               icon={faRankingStar}
               className={
-                isNavItemActive("/leaderboard", pathname)
-                  ? "text-primary"
-                  : "neutral"
+                isNavItemActive("/notes", pathname) ? "text-primary" : "neutral"
               }
-            />
-            Leaderboard
+            /> */}
+            Notes
           </Link>
         </li>
 
         <li>
           <Link
-            className={isNavItemActive("/growth", pathname) ? "active" : ""}
-            href="/growth"
+            className={isNavItemActive("/upload", pathname) ? "active" : ""}
+            href="/upload"
           >
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               icon={faSeedling}
               className={
-                isNavItemActive("/growth", pathname)
+                isNavItemActive("/upload", pathname)
                   ? "text-primary"
                   : "neutral"
               }
-            />
-            Growth
+            /> */}
+            Upload
           </Link>
         </li>
       </ul>
