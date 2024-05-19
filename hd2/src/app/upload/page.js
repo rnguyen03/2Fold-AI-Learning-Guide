@@ -245,8 +245,8 @@ const UploadPage = () => {
               }`}
             >
               <img
-                src="/tiger.png"
-                alt="ix_icon"
+                src="/tiger_icon.png"
+                alt="tiger_icon"
                 style={{ width: "70px", height: "70px" }}
               />
             </button>
