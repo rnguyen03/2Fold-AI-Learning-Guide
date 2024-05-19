@@ -37,8 +37,10 @@ export default function ChatGPT() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    let objDiv = document.getElementById("messages-list");
-    objDiv.scrollTop = objDiv.scrollHeight;
+    if (typeof window !== "undefined") {
+      const objDiv = document.getElementById("messages-list");
+      objDiv.scrollTop = objDiv.scrollHeight;
+    }
   }, [messages]);
 
   const handleSubmit = async (e) => {
@@ -73,11 +75,11 @@ export default function ChatGPT() {
           <MessageSet key={index} msg={msg} />
         ))}
         {isLoading && (
-          <span class="loading loading-dots loading-lg self-center" />
+          <span className="loading loading-dots loading-lg self-center" />
         )}
       </div>
       <form className="flex flex-col mb-2 mx-2" onSubmit={handleSubmit}>
-        <label class="flex justify-center items-center">
+        <label className="flex justify-center items-center">
           <input
             className="input input-bordered grow resize-none h-16 "
             placeholder="Message your Critter"

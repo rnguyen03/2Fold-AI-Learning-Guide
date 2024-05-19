@@ -1,3 +1,4 @@
+"use client";
 import { View, OrbitControls } from "@react-three/drei";
 import ThreeCommon from "./ThreeCommon";
 import { Rabbit } from "@/app/explore/Models";

@@ -1,3 +1,5 @@
+"use client";
+
 import { Environment, PerspectiveCamera } from "@react-three/drei";
 
 export default function ThreeCommon({ color }) {

@@ -1,3 +1,4 @@
+"use client";
 import { View, Preload } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 

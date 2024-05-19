@@ -23,3 +23,7 @@ body {
 .editor-toolbar > a {
   color: theme("textColor.inherit") !important;
 }
+
+#editor-ide {
+  display: none;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import SimpleMDE from "simplemde";
+import dynamic from "next/dynamic";
 import "simplemde/dist/simplemde.min.css";
 import {
   addDoc,
@@ -15,12 +15,16 @@ import {
 import { DB } from "@/app/firebase"; // Ensure correct import path
 import { useSession } from "next-auth/react";
 import axios from "axios";
-
-import "@/app/globals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
+import "@/app/globals.css";
 
 const ANIMALS = ["Crane", "Rabbit", "Ox", "Tiger", "Mouse"];
+
+// const SimpleMDE = dynamic(() => import("simplemde"), {
+//   ssr: false,
+//   loading: () => <p>Loading editor...</p>,
+// });
 
 function TabButton({ btnValue, activeTab, onClick }) {
   return (
@@ -44,36 +48,57 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
   const simpleMdeRef = useRef(null); // Use useRef to store SimpleMDE instance
   const [editorTitle, setEditorTitle] = useState(title);
   const [editorContent, setEditorContent] = useState(content);
+  const [isSetup, setIsSetup] = useState(false);
   const { data: session } = useSession();
 
   useEffect(() => {
     setEditorTitle(title);
     setEditorContent(content);
 
-    if (simpleMdeRef.current) {
-      simpleMdeRef.current.value(content);
+    if (simpleMdeRef?.current) {
+      simpleMdeRef?.current?.value(content);
     }
 
-    if (textareaRef.current && !simpleMdeRef.current) {
-      simpleMdeRef.current = new SimpleMDE({
-        element: textareaRef.current,
-        initialValue: content,
-        spellChecker: false,
-      });
+    const initializeEditor = async () => {
+      if (textareaRef.current && !simpleMdeRef.current) {
+        const SimpleMDE = (await import("simplemde")).default;
+        simpleMdeRef.current = new SimpleMDE({
+          element: textareaRef.current,
+          initialValue: content,
+          spellChecker: false,
+        });
 
-      simpleMdeRef.current.codemirror.on("change", () => {
-        setEditorContent(simpleMdeRef.current.value());
-      });
+        simpleMdeRef.current.codemirror.on("change", () => {
+          setEditorContent(simpleMdeRef.current.value());
+        });
+      } else if (simpleMdeRef.current) {
+        simpleMdeRef.current.value(content);
+      }
+      setIsSetup(true);
+      const elem = document.getElementById("editor-ide");
+      elem.style.display = "none";
+    };
+
+    if (typeof window !== "undefined" && !isSetup) {
+      initializeEditor();
     }
 
     // Cleanup on unmount
     return () => {
       if (simpleMdeRef.current) {
-        simpleMdeRef.current.toTextArea();
+        simpleMdeRef.current?.toTextArea();
         simpleMdeRef.current = null;
       }
     };
-  }, [title, content]);
+  }, [title, content, isSetup]);
+
+  useEffect(() => {
+    if (toast) {
+      setTimeout(() => {
+        setToast(false);
+      }, 3000);
+    }
+  }, [toast]);
 
   const handleDelete = async () => {
     try {
@@ -115,10 +140,13 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
 
     if (noteId) {
       // Update existing note
+
       await updateDoc(doc(DB, "notes", noteId), noteData);
     } else {
       // Create new note
+
       const newNoteRef = await addDoc(collection(DB, "notes"), noteData);
+
       noteData.id = newNoteRef.id;
 
       // Fetch the current user's data
@@ -148,28 +176,28 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
   };
 
   const handleCompanionChange = (e) => {
-    setCompanion(e.target.value);
+    if (typeof window !== "undefined") {
+      setCompanion(e.target.value);
+    }
   };
 
-  useEffect(() => {
-    if (toast) {
-      setTimeout(() => {
-        setToast(false);
-      }, 3000);
+  const handleOpenCompanionModal = () => {
+    if (typeof window !== "undefined") {
+      document.getElementById("companionModal").showModal();
     }
-  }, [toast]);
+  };
 
   return (
     <>
       <div className={`flex flex-col gap-y-2 ${isLoading ? "opacity-50" : ""}`}>
-        <div class="toast toast-top toast-center">
+        <div className="toast toast-top toast-center">
           {Boolean(toast) && Boolean(success) && (
-            <div class="alert alert-success">
+            <div className="alert alert-success">
               <span>{success}</span>
             </div>
           )}
           {Boolean(toast) && Boolean(saving) && (
-            <div class="alert alert-info">
+            <div className="alert alert-info">
               <span>{saving}</span>
             </div>
           )}
@@ -177,7 +205,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
         <button
           disabled={isLoading}
           onClick={handleDelete}
-          className="btn btn-error max-w-[20%]"
+          className="btn btn-error max-w-[30%]"
         >
           <FontAwesomeIcon icon={faTrashCan} /> Delete
         </button>
@@ -188,7 +216,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
           placeholder="Note Title"
           className="input input-bordered w-full mb-2"
         />
-        <textarea ref={textareaRef} />
+        <textarea id="editor-ide" ref={textareaRef} />
         <div className="flex justify-between" role="group">
           <button
             disabled={isLoading}
@@ -199,9 +227,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
             Cancel
           </button>
           <button
-            onClick={() =>
-              document.getElementById("companionModal").showModal()
-            }
+            onClick={handleOpenCompanionModal}
             className="btn btn-accent mt-2"
           >
             Select Your Companion
@@ -216,7 +242,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
         </div>
       </div>
 
-      <dialog id="companionModal" class="modal">
+      <dialog id="companionModal" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg">
             Select Your <strong>Study Companion</strong>
