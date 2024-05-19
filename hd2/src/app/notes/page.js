@@ -13,6 +13,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import NoteSetup from "@/components/three/NoteSetup";
 
 export default function Notes() {
+  const [toast, setToast] = useState(false);
+  const [success, setSuccess] = useState(null);
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [sessionId, setSessionId] = useState(uuidv4());
@@ -49,6 +51,13 @@ export default function Notes() {
   };
 
   const handleSave = async () => {
+    if (!selectedNote || !selectedNote.id) {
+      // do nothing
+    } else {
+      setToast(true);
+      setSuccess("Successfully saved your note!");
+    }
+    setSelectedNote(null);
     await fetchNotes();
     setSelectedNote(null);
   };
@@ -72,10 +81,25 @@ export default function Notes() {
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
+    
+  useEffect(() => {
+    if (toast) {
+      setTimeout(() => {
+        setToast(false);
+      }, 3000);
+    }
+  }, [toast])
 
   console.log(selectedNote);
   return (
     <main className="z-10 flex flex-col gap-y-4 justify-center items-center h-content">
+      <div class="toast toast-top toast-center">
+        {Boolean(toast) && Boolean(success) && (
+          <div class="alert alert-success">
+            <span>{success}</span>
+          </div>
+        )}
+      </div>
       <PanelGroup autoSaveId="persistence" direction="horizontal">
         <Panel className="rounded-2xl p-2 pr-0" defaultSize={30} minSize={25}>
           <div className=" flex justify-between items-center" role="group">
@@ -125,6 +149,7 @@ export default function Notes() {
               title={selectedNote.title}
               content={selectedNote.content}
               onSave={handleSave}
+              pet={selectedNote.marker}
             />
           ) : (
             <>

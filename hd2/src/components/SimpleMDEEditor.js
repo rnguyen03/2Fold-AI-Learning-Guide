@@ -20,8 +20,23 @@ import "@/app/globals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
+const ANIMALS = ["Crane", "Rabbit", "Ox", "Tiger", "Mouse"];
+
+function TabButton({ btnValue, activeTab, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      value={btnValue}
+      className={`join-item btn ${activeTab === btnValue ? "btn-active" : ""}`}
+    >
+      {btnValue}
+    </button>
+  );
+}
+
+const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [companion, setCompanion] = useState(pet ?? "");
   const [toast, setToast] = useState(false);
   const [saving, setSaving] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -93,7 +108,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     const noteData = {
       title: editorTitle,
       content: editorContent,
-      marker: "Crane",
+      marker: companion,
       summary: summary,
       tag: tagus,
     };
@@ -132,6 +147,10 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     setSuccess("Successfully saved your note!");
   };
 
+  const handleCompanionChange = (e) => {
+    setCompanion(e.target.value);
+  };
+
   useEffect(() => {
     if (toast) {
       setTimeout(() => {
@@ -141,52 +160,93 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
   }, [toast]);
 
   return (
-    <div className={`flex flex-col gap-y-2 ${isLoading ? "opacity-50" : ""}`}>
-      <div class="toast toast-top toast-center">
-        {Boolean(toast) && Boolean(success) && (
-          <div class="alert alert-success">
-            <span>{success}</span>
-          </div>
-        )}
-        {Boolean(toast) && Boolean(saving) && (
-          <div class="alert alert-info">
-            <span>{saving}</span>
-          </div>
-        )}
-      </div>
-      <button
-        disabled={isLoading}
-        onClick={handleDelete}
-        className="btn btn-error max-w-[20%]"
-      >
-        <FontAwesomeIcon icon={faTrashCan} /> Delete
-      </button>
-      <input
-        type="text"
-        value={editorTitle}
-        onChange={(e) => setEditorTitle(e.target.value)}
-        placeholder="Note Title"
-        className="input input-bordered w-full mb-2"
-      />
-      <textarea ref={textareaRef} />
-      <div className="flex justify-between" role="group">
+    <>
+      <div className={`flex flex-col gap-y-2 ${isLoading ? "opacity-50" : ""}`}>
+        <div class="toast toast-top toast-center">
+          {Boolean(toast) && Boolean(success) && (
+            <div class="alert alert-success">
+              <span>{success}</span>
+            </div>
+          )}
+          {Boolean(toast) && Boolean(saving) && (
+            <div class="alert alert-info">
+              <span>{saving}</span>
+            </div>
+          )}
+        </div>
         <button
           disabled={isLoading}
-          onClick={onSave}
-          className="btn btn-error mt-2"
+          onClick={handleDelete}
+          className="btn btn-error max-w-[20%]"
         >
-          <FontAwesomeIcon icon={faXmark} />
-          Cancel
+          <FontAwesomeIcon icon={faTrashCan} /> Delete
         </button>
-        <button
-          onClick={handleSave}
-          disabled={isLoading}
-          className="btn btn-primary mt-2"
-        >
-          Save Note
-        </button>
+        <input
+          type="text"
+          value={editorTitle}
+          onChange={(e) => setEditorTitle(e.target.value)}
+          placeholder="Note Title"
+          className="input input-bordered w-full mb-2"
+        />
+        <textarea ref={textareaRef} />
+        <div className="flex justify-between" role="group">
+          <button
+            disabled={isLoading}
+            onClick={onSave}
+            className="btn btn-error mt-2"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            Cancel
+          </button>
+          <button
+            onClick={() =>
+              document.getElementById("companionModal").showModal()
+            }
+            className="btn btn-accent mt-2"
+          >
+            Select Your Companion
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isLoading}
+            className="btn btn-primary mt-2"
+          >
+            Save Note
+          </button>
+        </div>
       </div>
-    </div>
+
+      <dialog id="companionModal" class="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            Select Your <strong>Study Companion</strong>
+          </h3>
+
+          <div className="join">
+            {ANIMALS.map((animal) => (
+              <TabButton
+                key={animal}
+                btnValue={animal}
+                activeTab={companion}
+                onClick={handleCompanionChange}
+              />
+            ))}
+          </div>
+
+          <div className="modal-action">
+            <form method="dialog" className="w-full flex justify-between">
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn btn-error">Cancel</button>
+              <button className="btn btn-success">Confirm</button>
+            </form>
+          </div>
+        </div>
+        {/* click outside close */}
+        <form method="dialog" className="modal-backdrop">
+          <button>Close</button>
+        </form>
+      </dialog>
+    </>
   );
 };
 

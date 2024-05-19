@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { DB } from "@/app/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -15,7 +15,7 @@ import axios from "axios";
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState([]); // Ensure initial state is an empty array
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -30,23 +30,6 @@ export default function Home() {
     [searchParams]
   );
 
-  const fetchCards = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(DB, "notes"));
-      const cardsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setCards(cardsData);
-    } catch (error) {
-      console.error("Error fetching cards:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCards();
-  }, []);
-
   // Marker to image map
   const markerToImageMap = {
     Crane: "/crane.png",
@@ -55,12 +38,57 @@ export default function Home() {
     // Add more markers and their corresponding images here
   };
 
-  const handleViewMoreClick = async (noteId) => {
+  const fetchAdditionalCards = async (count) => {
     try {
-      await axios.post('/api/core/notes/toCollection', { noteId });
-      router.push(`/notes?noteId=${ noteId }`);
+      const querySnapshot = await getDocs(collection(DB, "notes"));
+      const cardsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      // Shuffle the array and pick the first `count` elements
+      const shuffledCards = cardsData.sort(() => 0.5 - Math.random());
+      return shuffledCards.slice(0, count);
     } catch (error) {
-      console.error("Error adding note to user:", error);
+      console.error("Error fetching additional cards:", error);
+      return [];
+    }
+  };
+
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      router.push(pathname + "?" + createQueryString("q", searchQuery));
+      const res = await axios.post('/api/core/explore', { searchQuery });
+
+      // Fetch full details of each similar note
+      const similarNotes = [];
+      console.log("Similar notes:", res.data);
+
+      for (const noteId of res.data) {
+          const trimmedNoteId = noteId.trim();
+          const noteDoc = await getDoc(doc(DB, "notes", trimmedNoteId));
+          if (noteDoc.exists()) {
+              similarNotes.push({
+                  id: noteDoc.id,
+                  ...noteDoc.data(),
+              });
+          }
+      }
+
+      console.log("Similar notes:", similarNotes);
+
+      let fetchedCards = similarNotes;
+      if (fetchedCards.length < 5) {
+        const additionalCards = await fetchAdditionalCards(5 - fetchedCards.length);
+        fetchedCards = fetchedCards.concat(additionalCards); // Append additional cards
+      }
+
+      setCards(fetchedCards);
+    } catch (error) {
+      console.error("Error fetching response:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,16 +101,7 @@ export default function Home() {
         </div>
 
         {session?.user ? (
-          <form
-            className="form-control basis-2/12 w-[35%]"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setIsLoading(true);
-              router.push(pathname + "?" + createQueryString("q", searchQuery));
-              // TODO: Make call to search for new notes
-              setIsLoading(false);
-            }}
-          >
+          <form className="form-control basis-2/12 w-[35%]" onSubmit={handleSearchSubmit}>
             <div className="relative border p-2 rounded-xl">
               <input
                 className="w-full pl-2 pr-8 py-2 outline-none"
@@ -114,7 +133,7 @@ export default function Home() {
 
       <div className="mt-12 mx-8 max-w-screen-2xl max-h-content" role="group">
         <ul className="flex gap-x-2 gap-y-2 flex-wrap items-center justify-center overflow-y-auto max-w-screen-2xl rounded-2xl bg-gray-200 px-2 py-4">
-          {cards.map((card) => (
+          {Array.isArray(cards) && cards.map((card) => (
             <li key={card.id}>
               <div className="card w-72 bg-base-100 shadow-xl">
                 <figure className="p-2 border-4 border-gray-300">
