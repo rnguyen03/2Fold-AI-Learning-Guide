@@ -8,11 +8,17 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 
 export function Rabbit(props) {
-  const { scene } = useGLTF("./rabbit.glb");
-  const rabbitRef = useRef();
-  const mouse = useRef({ x: 0, y: 0 });
-  const cubesRef = useRef([]);
-  const cubesRef2 = useRef([]);
+  const rabbit = useGLTF('./rabbit.glb')
+
+  const rabbitRef = useRef()
+  const mouse = useRef({ x: 0, y: 0 })
+  const cubesRef = useRef([])
+  const cubes2Ref = useRef([])
+  const cubes3Ref = useRef([])
+  const paperRef = useRef([])
+  const bgRef = useRef([])
+
+
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -33,77 +39,113 @@ export function Rabbit(props) {
       rabbitRef.current.position.y = Math.sin(time) * 0.5 - 1.6;
 
       // Convert mouse position to 3D space
-      const x = mouse.current.x;
-      const y = mouse.current.y;
+      const x = mouse.current.x
+      const y = mouse.current.y 
       // Calculate angle to look at the mouse position
-      rabbitRef.current.rotation.y = x * 2 + Math.PI / 4;
+
+
+      rabbitRef.current.rotation.y = x*2+Math.PI/4
+
+
     }
-    cubesRef.current.forEach((cube) => {
+
+    cubesRef.current.forEach((cube, index) => {
       if (cube) {
-        cube.rotation.x = Math.sin(time) / 40 + 0.5;
+
+        cube.position.y += 0.005
       }
-    });
-    cubesRef2.current.forEach((cube) => {
+    })
+  
+
+
+    
+    paperRef.current.position.y = (Math.sin(time)) * 0.9 - 3
+    paperRef.current.rotation.y = Math.PI/4
+    bgRef.current.rotation.y = Math.PI/4
+    
+
+    cubes2Ref.current.forEach((cube, index) => {
       if (cube) {
-        cube.rotation.x = Math.sin(time) / 40 - 0.5;
+        const delay = index * 5
+        cube.rotation.z = Math.PI/4
       }
-    });
-  });
-  const positions1 = useMemo(() => {
-    const posArray = [];
-    // for (let i = 0; i < 100; i++) {
-    //   posArray.push([1 - 2, Math.random() * 4 - 2,( Math.random()-0.5)*100 - 2])
-    // }
-    posArray.push([-3, 1, 25]);
-    posArray.push([-22, 1, 28]);
-    posArray.push([-15, 1, 28]);
+    })
+    cubes3Ref.current.forEach((cube, index) => {
+      if (cube) {
+        const delay = index * 5
+        cube.rotation.z = -Math.PI/4
+      }
+    })
 
-    // posArray.push([-10,1,-30])
-    // posArray.push([-5,1,-26])
-    // posArray.push([-15,1,-28])
+  })
 
-    return posArray;
-  }, []);
-  const positions2 = useMemo(() => {
-    const posArray = [];
-    // for (let i = 0; i < 100; i++) {
-    //   posArray.push([1 - 2, Math.random() * 4 - 2,( Math.random()-0.5)*100 - 2])
-    // }
-    // posArray.push([-20,-10,30])
-    // posArray.push([-5,1,26])
-    // posArray.push([-15,1,28])
+  const leftBoxes = []
+  const rightBoxes = []
+  leftBoxes.push([-12,0,28])
+  
+  // leftBoxes.push([-14,0,28])
+  // leftBoxes.push([-16,0,28])
+  // leftBoxes.push([-18,0,28])
+  // leftBoxes.push([-8,0,28])
 
-    posArray.push([-10, 1, -25]);
-    posArray.push([-22, 1, -28]);
-    posArray.push([-15, 1, -28]);
-
-    return posArray;
-  }, []);
+  rightBoxes.push([-12,0,-28])
+  const newPos = [-0.5,-4,0]
+  const dPos = [-0.5, -4, 0]
+  const posArray = []
+  
+  for (let i = 0; i< 10000; i++){
+    posArray.push([(Math.random()-0.5)*20,(Math.random()-0.5)*1000,(Math.random()-0.5)*20])
+  }
 
   return (
     <>
-      <primitive ref={rabbitRef} object={scene} {...props} />
-      {positions1.map((pos, index) => (
+      <primitive ref={rabbitRef} object={rabbit.scene} {...props} />
+      
+      <mesh ref = {paperRef} position = {newPos}>
+      <boxGeometry args={[3, 0, 3]} />
+          <meshStandardMaterial color={'beige'} />
+      </mesh>
+      
+      {posArray.map((pos, index) => (
         <mesh
           key={index}
           position={pos}
           ref={(el) => (cubesRef.current[index] = el)}
         >
-          <boxGeometry args={[0.1, 20, 20]} />
-          <meshStandardMaterial color={"red"} />
+          <boxGeometry args={[0.05, 0.05, 0.05]} />
+          <meshStandardMaterial color={'grey'} />
         </mesh>
+        
       ))}
 
-      {positions2.map((pos, index) => (
+      {leftBoxes.map((pos, index) => (
         <mesh
           key={index}
           position={pos}
-          ref={(el) => (cubesRef2.current[index] = el)}
+          ref={el => (cubes2Ref.current[index] = el)}
         >
-          <boxGeometry args={[0.1, 20, 20]} />
-          <meshStandardMaterial color={"pink"} />
+          <boxGeometry args={[10, 20, 20]} />
+          <meshStandardMaterial color={'#ef9995'} />
         </mesh>
+        
       ))}
+      {rightBoxes.map((pos, index) => (
+        <mesh
+          key={index}
+          position={pos}
+          ref={el => (cubes3Ref.current[index] = el)}
+        >
+          <boxGeometry args={[10, 20, 20]} />
+          <meshStandardMaterial color={'brown'} />
+        </mesh>
+        
+      ))}
+      <mesh  position = {dPos} ref = {bgRef}>
+      <boxGeometry args={[10, 0.1, 10]} />
+          <meshStandardMaterial color={'black'} />
+      </mesh>
+      
+
     </>
   );
 }
@@ -135,7 +177,9 @@ export function RabbitRabbit(props) {
       // Calculate angle to look at the mouse position
       rabbitRef.current.rotation.y = x * 2 - Math.PI / 2;
     }
-  });
+
+  
+  })
 
   return <primitive ref={rabbitRef} object={scene} {...props} />;
 }
