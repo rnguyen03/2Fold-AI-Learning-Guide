@@ -157,22 +157,18 @@ export default function Home() {
         </div>
 
         {session?.user ? (
-          <form
-            className="form-control basis-2/12 w-[35%]"
-            onSubmit={handleSearchSubmit}
-          >
-            <div className="relative border p-2 rounded-xl flex">
+            <form className="form-control basis-2/12 w-[35%]" onSubmit={handleSearchSubmit}>
+            <div className="relative border p-2 rounded-full flex shadow-lg">
               <input
-                className="w-full pl-2 pr-8 py-2 outline-none"
+                className="w-full pl-4 pr-12 py-2 rounded-full outline-none text-lg"
                 type="text"
-                placeholder="Ask Shitter for Notes"
+                placeholder="Ask me anything!"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
-                type="button"
-                onClick={handleSearchSubmit}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 opacity-70"
+                type="submit"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center text-gray-600"
               >
                 <FontAwesomeIcon icon={faMagnifyingGlass} />
               </button>

@@ -85,7 +85,7 @@ export default function ChatGPT() {
         <label className="flex justify-center items-center">
           <input
             className="input input-bordered grow resize-none h-16 "
-            placeholder="Message your Critter"
+            placeholder="Consult with me about your note!"
             value={prompt}
             disabled={isLoading}
             onChange={(e) => setPrompt(e.target.value)}

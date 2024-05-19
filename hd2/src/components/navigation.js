@@ -13,7 +13,7 @@ export default function Navbar() {
 
   return (
     <nav className="navbar w-full bg-base-100">
-      <button className="btn">BBC</button>
+      <button className="btn">2Fold</button>
       <ul className="menu menu-horizontal w-[90%] flex justify-end">
         <li>
           <Link
