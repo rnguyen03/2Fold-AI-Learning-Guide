@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { finalizePrompt } from "@/app/promptEng";
 
 const GPTResponse = ({ response }) => {
   return (
@@ -45,7 +46,7 @@ export default function ChatGPT() {
 
     try {
       setIsLoading(true);
-      const res = await axios.post("/api/core/chatgpt", { prompt });
+      const res = await finalizePrompt('You are interacting with the user. Do not explicitly mention the database or this conversation, and keep messages to a maximum of three sentences before asking the user for another prompt ' + prompt);
       const message = {
         response: res.data.response.choices[0].message.content,
         prompt,

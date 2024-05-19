@@ -8,16 +8,16 @@ import ChatGPT from "@/components/ChatGPT";
 import { v4 as uuidv4 } from "uuid";
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import ThreeSetup from "@/components/three/ThreeSetup";
-import ThreeRabbit from "@/components/three/ThreeRabbit";
+import NoteSetup from "@/components/three/NoteSetup";
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [sessionId, setSessionId] = useState(uuidv4());
   const [isLoading, setIsLoading] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const { data: session } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -49,9 +49,8 @@ export default function Notes() {
   };
 
   const handleSave = async () => {
-    setSelectedNote(null);
     await fetchNotes();
-    // const updatedNote = notes.find((note) => note.id === selectedNote.id);
+    setSelectedNote(null);
   };
 
   const handleCreateNewNote = () => {
@@ -61,6 +60,19 @@ export default function Notes() {
   useEffect(() => {
     fetchNotes();
   }, [session]);
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      setCursorPosition({ x: event.clientX, y: event.clientY });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
   console.log(selectedNote);
   return (
     <main className="z-10 flex flex-col gap-y-4 justify-center items-center h-content">
@@ -73,7 +85,7 @@ export default function Notes() {
               Create New Note
             </button>
           </div>
-          <div class="divider my-0 h-0.5" />
+          <div className="divider my-0 h-0.5" />
           <ul className="menu bg-base-200 rounded-2xl">
             {!isLoading ? (
               notes.length > 0 ? (
@@ -96,7 +108,7 @@ export default function Notes() {
               )
             ) : (
               <>
-                <span class="loading loading-dots loading-md"></span>
+                <span className="loading loading-dots loading-md"></span>
               </>
             )}
           </ul>
@@ -108,7 +120,7 @@ export default function Notes() {
         <Panel className="p-2" minSize={30}>
           {Boolean(selectedNote) ? (
             <SimpleMDEEditor
-              key={selectedNote.id} // Adding a key here to force re-render
+              key={selectedNote.id}
               noteId={selectedNote.id}
               title={selectedNote.title}
               content={selectedNote.content}
@@ -126,13 +138,12 @@ export default function Notes() {
         />
         <Panel defaultSize={30} minSize={25}>
           <PanelGroup direction="vertical">
-            <Panel minSize={35} maxSize={35}>
+            <Panel minSize={35}>
               <div
                 className="z-20"
                 style={{ position: "relative", width: "100%", height: "100%" }}
               >
-                <ThreeSetup />
-                <ThreeRabbit />
+                <NoteSetup cursorPosition={cursorPosition} />
               </div>
             </Panel>
             <PanelResizeHandle

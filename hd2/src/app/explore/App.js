@@ -20,12 +20,12 @@ export function App() {
         <div className="text">
           <View className="absolute top-0 left-0 w-full h-full break-words">
             <Common color="" />
-            <Rabbit scale={2} position={[0, -1.6, 0]} />
+            <Rabbit />
             {/* <OrbitControls /> */}
           </View>
           <View className="absolute top-0 left-0 w-full h-full break-words">
             <Common color="lightpink" />
-            <Tiger scale={2} position={[0, -1.6, 0]} />
+            <Tiger  />
             {/* <OrbitControls /> */}
           </View>
         </div>
