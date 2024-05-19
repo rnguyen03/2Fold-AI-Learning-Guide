@@ -81,16 +81,22 @@ const UploadPage = () => {
                 // Prepare the prompt for GPT summarization
                 const prompt = `Please briefly summarize the following content:\n\n${content}`;
 
+                const tag = `Please encapsulate the folowing contents into a maximum of five words\n ${content}`
+                const tagline = await axios.post('/api/core/chatgpt', { tag });
                 // Call GPT to summarize the content
                 const res = await axios.post('/api/core/chatgpt', { prompt });
+                
+
                 const summary = res.data.response.choices[0].message.content;
+                const tagus = tagline.data.response.choices[0].message.content;
+
 
                 // Add note metadata and content to Firestore
                 const newNoteRef = await addDoc(collection(DB, 'notes'), {
                     title: title,
                     content: content,
                     marker: marker,
-                    tag: 'tag',
+                    tag: tagus,
                     summary: summary,
                 });
 

@@ -62,14 +62,18 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
 
     // Call gpt to summarize the content
     const res = await axios.post("/api/core/chatgpt", { prompt });
+    const tag = `Please encapsulate the folowing contents into a maximum of five words\n ${content}`
+    const tagline = await axios.post('/api/core/chatgpt', { tag });
     const summary = res.data.response.choices[0].message.content;
+    const tagus = tagline.data.response.choices[0].message.content;
+
 
     const noteData = {
       title: editorTitle,
       content: editorContent,
       marker: "Crane",
       summary: summary,
-      tag: "tag",
+      tag: tagus,
     };
 
     if (noteId) {
