@@ -35,7 +35,6 @@ export function Rabbit(props) {
       // Convert mouse position to 3D space
       const x = mouse.current.x
       const y = mouse.current.y
-      console.log(x,rabbitRef.current.rotation.z,y)
       // Calculate angle to look at the mouse position
       rabbitRef.current.rotation.y = x*2+Math.PI/4
     }

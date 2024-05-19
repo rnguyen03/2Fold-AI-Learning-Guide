@@ -7,12 +7,15 @@ import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import ChatGPT from "@/components/ChatGPT";
 import { v4 as uuidv4 } from "uuid";
 import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
   const [selectedNote, setSelectedNote] = useState(null);
   const [sessionId, setSessionId] = useState(uuidv4());
   const { data: session } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const fetchNotes = async () => {
     if (!session?.user?.email) return;
@@ -22,6 +25,12 @@ export default function Notes() {
         `/api/core/notes/user/${session.user.email}`
       );
       setNotes(response.data);
+      console.log("Search params:", searchParams.get("noteId"));
+      if (searchParams.has("noteId")) {
+        const noteId = searchParams.get("noteId");
+        console.log("Note ID from search params:", noteId);
+        setSelectedNote(response.data.find((note) => note.id === noteId));
+      }
     } catch (error) {
       console.error("Error fetching notes:", error);
     }
@@ -45,7 +54,7 @@ export default function Notes() {
   useEffect(() => {
     fetchNotes();
   }, [session]);
-
+  console.log(selectedNote)
   return (
     <main className="z-10 flex flex-col gap-y-4 justify-center items-center h-content">
       <PanelGroup autoSaveId="persistence" direction="horizontal">
@@ -66,7 +75,7 @@ export default function Notes() {
         </Panel>
         <PanelResizeHandle />
         <Panel className="p-2" minSize={30}>
-          {selectedNote && (
+          {Boolean(selectedNote) && (
             <SimpleMDEEditor
               key={selectedNote.id} // Adding a key here to force re-render
               noteId={selectedNote.id}
