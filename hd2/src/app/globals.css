@@ -9,9 +9,17 @@ body {
 .CodeMirror {
   max-height: 250px;
   min-height: 250px;
+  background-color: theme("backgroundColor.inherit") !important;
+  color: theme("textColor.inherit") !important;
 }
 
 .CodeMirror-scroll {
   max-height: 250px;
   min-height: 250px;
+  background-color: theme("backgroundColor.inherit");
+  color: theme("textColor.inherit");
+}
+
+.editor-toolbar > a {
+  color: theme("textColor.inherit") !important;
 }

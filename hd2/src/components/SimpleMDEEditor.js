@@ -17,15 +17,19 @@ import { useSession } from "next-auth/react";
 import axios from "axios";
 
 import "@/app/globals.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [saving, setSaving] = useState(null);
+  const [toast, setToast] = useState(false);
+  const [success, setSuccess] = useState(null);
   const textareaRef = useRef(null);
   const simpleMdeRef = useRef(null); // Use useRef to store SimpleMDE instance
   const [editorTitle, setEditorTitle] = useState(title);
   const [editorContent, setEditorContent] = useState(content);
   const { data: session } = useSession();
-
-  console.log("Jason Note ID:", noteId);
 
   useEffect(() => {
     setEditorTitle(title);
@@ -62,6 +66,9 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     const tags = `Please encapsulate the following content into a maximum of five words\n ${editorContent}`
 
     // Call gpt to summarize the content
+    setIsLoading(true);
+    setToast(true);
+    setSaving("Saving your note...");
     const res = await axios.post("/api/core/chatgpt", { prompt });
     const tag = `Please encapsulate the folowing contents into a maximum of five words\n ${content}`
     const tagline = await axios.post('/api/core/chatgpt', { tag });
@@ -86,7 +93,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
       noteData.id = newNoteRef.id;
 
       // Fetch the current user's data
-      const email = session.user.email;
+      const email = session?.user?.email;
       const userQuery = query(
         collection(DB, "users"),
         where("email", "==", email)
@@ -106,10 +113,33 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     }
 
     onSave();
+    setIsLoading(false);
+    setToast(true);
+    setSuccess("Successfully saved your note!");
   };
+
+  useEffect(() => {
+    if (toast) {
+      setTimeout(() => {
+        setToast(false);
+      }, 3000);
+    }
+  }, [toast]);
 
   return (
     <div>
+      <div class="toast toast-top toast-center">
+        {Boolean(toast) && Boolean(success) && (
+          <div class="alert alert-success">
+            <span>{success}</span>
+          </div>
+        )}
+        {Boolean(toast) && Boolean(saving) && (
+          <div class="alert alert-info">
+            <span>{saving}</span>
+          </div>
+        )}
+      </div>
       <input
         type="text"
         value={editorTitle}
@@ -117,10 +147,20 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
         placeholder="Note Title"
         className="input input-bordered w-full mb-2"
       />
-      <textarea style={{ height: "100px" }} ref={textareaRef} />
-      <button onClick={handleSave} className="btn btn-primary mt-2">
-        Save
-      </button>
+      <textarea ref={textareaRef} />
+      <div className="flex justify-between" role="group">
+        <button onClick={onSave} className="btn btn-error mt-2">
+          <FontAwesomeIcon icon={faXmark} />
+          Cancel
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={isLoading}
+          className="btn btn-primary mt-2"
+        >
+          Save Note
+        </button>
+      </div>
     </div>
   );
 };

@@ -24,8 +24,8 @@ const UserPrompt = ({ prompt }) => {
 const MessageSet = ({ msg }) => {
   return (
     <>
-      <GPTResponse response={msg.response} />
       <UserPrompt prompt={msg.prompt} />
+      <GPTResponse response={msg.response} />
     </>
   );
 };
@@ -61,11 +61,12 @@ export default function ChatGPT() {
         prompt,
       };
       setMessages([...messages, message]);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex h-full justify-between flex-col bg-info rounded-2xl">
+    <div className="flex h-full justify-between flex-col rounded-2xl">
       <div id="messages-list" className="overflow-y-auto">
         {messages.map((msg, index) => (
           <MessageSet key={index} msg={msg} />
