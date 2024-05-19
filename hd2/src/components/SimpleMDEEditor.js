@@ -67,7 +67,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     const noteData = {
       title: editorTitle,
       content: editorContent,
-      marker: "marker",
+      marker: "Crane",
       summary: summary,
       tag: "tag",
     };
