@@ -24,6 +24,6 @@ body {
   color: theme("textColor.inherit") !important;
 }
 
-#editor-ide {
-  display: none;
-}
+/* #editor-ide { */
+/* display: none; */
+/* } */

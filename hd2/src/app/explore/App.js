@@ -11,7 +11,7 @@ import {
   Environment,
   Center,
 } from "@react-three/drei";
-import { Rabbit, Tiger } from "./Models";
+import { Rabbit } from "./Models";
 
 export function App() {
   return (
@@ -25,7 +25,6 @@ export function App() {
           </View>
           <View className="absolute top-0 left-0 w-full h-full break-words">
             <Common color="lightpink" />
-            <Tiger  />
             {/* <OrbitControls /> */}
           </View>
         </div>

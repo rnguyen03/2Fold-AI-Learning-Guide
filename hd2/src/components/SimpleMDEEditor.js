@@ -74,9 +74,9 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
       } else if (simpleMdeRef.current) {
         simpleMdeRef.current.value(content);
       }
-      setIsSetup(true);
+      // setIsSetup(true);
       const elem = document.getElementById("editor-ide");
-      elem.style.display = "none";
+      // elem.style.display = "none";
     };
 
     if (typeof window !== "undefined" && !isSetup) {
