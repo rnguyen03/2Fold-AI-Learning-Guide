@@ -6,7 +6,7 @@
  * Sample Usage: axios.put("/api/core/notes/0m5lXXjgUmD61hyalKft", data)
  */
 
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 import { DB } from "@/app/firebase";
 
@@ -53,5 +53,21 @@ export async function PUT(req, { params }) {
   } catch (err) {
     console.error("Error updating note: ", err);
     return new NextResponse(JSON.stringify({ err }), { status: 400 });
+  }
+}
+
+export async function DELETE(req, { params }) {
+  const noteId = params.noteId;
+  try {
+    await deleteDoc(doc(DB, "notes", noteId));
+    return new NextResponse(JSON.stringify({}), { status: 200 });
+  } catch (e) {
+    console.error("Error getting notes: ", e);
+    return new NextResponse(
+      JSON.stringify({ err: "Had issues deleting that note!" }),
+      {
+        status: 400,
+      }
+    );
   }
 }

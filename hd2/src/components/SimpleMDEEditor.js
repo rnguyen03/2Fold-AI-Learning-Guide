@@ -18,12 +18,27 @@ import axios from "axios";
 
 import "@/app/globals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 
-const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
+const ANIMALS = ["Crane", "Rabbit", "Ox", "Tiger", "Mouse"];
+
+function TabButton({ btnValue, activeTab, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      value={btnValue}
+      className={`join-item btn ${activeTab === btnValue ? "btn-active" : ""}`}
+    >
+      {btnValue}
+    </button>
+  );
+}
+
+const SimpleMDEEditor = ({ noteId, title, content, onSave, pet }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [saving, setSaving] = useState(null);
+  const [companion, setCompanion] = useState(pet ?? "");
   const [toast, setToast] = useState(false);
+  const [saving, setSaving] = useState(null);
   const [success, setSuccess] = useState(null);
   const textareaRef = useRef(null);
   const simpleMdeRef = useRef(null); // Use useRef to store SimpleMDE instance
@@ -60,26 +75,40 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     };
   }, [title, content]);
 
+  const handleDelete = async () => {
+    try {
+      setIsLoading(true);
+      await axios.delete(`/api/core/notes/${noteId}`);
+      onSave();
+      setToast(true);
+      setSuccess("Successfully deleted your note!");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     // Prepare the prompt for GPT summarization
     const prompt = `Please briefly summarize the following content:\n\n${editorContent}`;
-    const tags = `Please encapsulate the following content into a maximum of five words\n ${editorContent}`
+    const tagsPrompt = `Please encapsulate the following content into a maximum of five words\n ${editorContent}`;
 
     // Call gpt to summarize the content
     setIsLoading(true);
     setToast(true);
     setSaving("Saving your note...");
     const res = await axios.post("/api/core/chatgpt", { prompt });
-    const tag = `Please encapsulate the folowing contents into a maximum of five words\n ${content}`
-    const tagline = await axios.post('/api/core/chatgpt', { tag });
+    const tagline = await axios.post("/api/core/chatgpt", {
+      prompt: tagsPrompt,
+    });
     const summary = res.data.response.choices[0].message.content;
     const tagus = tagline.data.response.choices[0].message.content;
-
 
     const noteData = {
       title: editorTitle,
       content: editorContent,
-      marker: "Crane",
+      marker: companion,
       summary: summary,
       tag: tagus,
     };
@@ -118,6 +147,10 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     setSuccess("Successfully saved your note!");
   };
 
+  const handleCompanionChange = (e) => {
+    setCompanion(e.target.value);
+  };
+
   useEffect(() => {
     if (toast) {
       setTimeout(() => {
@@ -127,41 +160,93 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
   }, [toast]);
 
   return (
-    <div>
-      <div class="toast toast-top toast-center">
-        {Boolean(toast) && Boolean(success) && (
-          <div class="alert alert-success">
-            <span>{success}</span>
-          </div>
-        )}
-        {Boolean(toast) && Boolean(saving) && (
-          <div class="alert alert-info">
-            <span>{saving}</span>
-          </div>
-        )}
-      </div>
-      <input
-        type="text"
-        value={editorTitle}
-        onChange={(e) => setEditorTitle(e.target.value)}
-        placeholder="Note Title"
-        className="input input-bordered w-full mb-2"
-      />
-      <textarea ref={textareaRef} />
-      <div className="flex justify-between" role="group">
-        <button onClick={onSave} className="btn btn-error mt-2">
-          <FontAwesomeIcon icon={faXmark} />
-          Cancel
-        </button>
+    <>
+      <div className={`flex flex-col gap-y-2 ${isLoading ? "opacity-50" : ""}`}>
+        <div class="toast toast-top toast-center">
+          {Boolean(toast) && Boolean(success) && (
+            <div class="alert alert-success">
+              <span>{success}</span>
+            </div>
+          )}
+          {Boolean(toast) && Boolean(saving) && (
+            <div class="alert alert-info">
+              <span>{saving}</span>
+            </div>
+          )}
+        </div>
         <button
-          onClick={handleSave}
           disabled={isLoading}
-          className="btn btn-primary mt-2"
+          onClick={handleDelete}
+          className="btn btn-error max-w-[20%]"
         >
-          Save Note
+          <FontAwesomeIcon icon={faTrashCan} /> Delete
         </button>
+        <input
+          type="text"
+          value={editorTitle}
+          onChange={(e) => setEditorTitle(e.target.value)}
+          placeholder="Note Title"
+          className="input input-bordered w-full mb-2"
+        />
+        <textarea ref={textareaRef} />
+        <div className="flex justify-between" role="group">
+          <button
+            disabled={isLoading}
+            onClick={onSave}
+            className="btn btn-error mt-2"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            Cancel
+          </button>
+          <button
+            onClick={() =>
+              document.getElementById("companionModal").showModal()
+            }
+            className="btn btn-accent mt-2"
+          >
+            Select Your Companion
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isLoading}
+            className="btn btn-primary mt-2"
+          >
+            Save Note
+          </button>
+        </div>
       </div>
-    </div>
+
+      <dialog id="companionModal" class="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            Select Your <strong>Study Companion</strong>
+          </h3>
+
+          <div className="join">
+            {ANIMALS.map((animal) => (
+              <TabButton
+                key={animal}
+                btnValue={animal}
+                activeTab={companion}
+                onClick={handleCompanionChange}
+              />
+            ))}
+          </div>
+
+          <div className="modal-action">
+            <form method="dialog" className="w-full flex justify-between">
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn btn-error">Cancel</button>
+              <button className="btn btn-success">Confirm</button>
+            </form>
+          </div>
+        </div>
+        {/* click outside close */}
+        <form method="dialog" className="modal-backdrop">
+          <button>Close</button>
+        </form>
+      </dialog>
+    </>
   );
 };
 
