@@ -55,6 +55,38 @@ export default function Home() {
     }
   };
 
+  const handleViewMoreClick = async (noteId) => {
+    try {
+      await axios.post('/api/core/notes/toCollection', { noteId });
+      router.push(`/notes?noteId=${ noteId }`);
+      for (const noteId of res.data) {
+          const trimmedNoteId = noteId.trim();
+          const noteDoc = await getDoc(doc(DB, "notes", trimmedNoteId));
+          if (noteDoc.exists()) {
+              similarNotes.push({
+                  id: noteDoc.id,
+                  ...noteDoc.data(),
+              });
+          }
+      }
+
+      console.log("Similar notes:", similarNotes);
+
+      let fetchedCards = similarNotes;
+      if (fetchedCards.length < 5) {
+        const additionalCards = await fetchAdditionalCards(5 - fetchedCards.length);
+        fetchedCards = fetchedCards.concat(additionalCards); // Append additional cards
+      }
+
+      setCards(fetchedCards);
+    } catch (error) {
+      console.error("Error adding note to user:", error);
+      console.error("Error fetching response:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
