@@ -85,13 +85,13 @@ const UploadPage = () => {
                 const res = await axios.post('/api/core/chatgpt', { prompt });
                 const tagline = await axios.post('/api/core/chatgpt', {subject})
                 const summary = res.data.response.choices[0].message.content;
-
+                const tagus = tagline.data.response.choices[0].message.content;
                 // Add note metadata and content to Firestore
                 const newNoteRef = await addDoc(collection(DB, 'notes'), {
                     title: title,
                     content: content,
                     marker: marker,
-                    tag: tagline,
+                    tag: tagus,
                     summary: summary,
                 });
 
