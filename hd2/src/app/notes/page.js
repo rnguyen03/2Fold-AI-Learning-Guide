@@ -8,7 +8,7 @@ import ChatGPT from "@/components/ChatGPT";
 import { v4 as uuidv4 } from "uuid";
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import ThreeSetup from "@/components/three/ThreeSetup";
 import ThreeRabbit from "@/components/three/ThreeRabbit";
@@ -49,9 +49,9 @@ export default function Notes() {
   };
 
   const handleSave = async () => {
+    setSelectedNote(null);
     await fetchNotes();
     // const updatedNote = notes.find((note) => note.id === selectedNote.id);
-    setSelectedNote(null);
   };
 
   const handleCreateNewNote = () => {

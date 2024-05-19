@@ -18,12 +18,12 @@ import axios from "axios";
 
 import "@/app/globals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [saving, setSaving] = useState(null);
   const [toast, setToast] = useState(false);
+  const [saving, setSaving] = useState(null);
   const [success, setSuccess] = useState(null);
   const textareaRef = useRef(null);
   const simpleMdeRef = useRef(null); // Use useRef to store SimpleMDE instance
@@ -60,21 +60,35 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
     };
   }, [title, content]);
 
+  const handleDelete = async () => {
+    try {
+      setIsLoading(true);
+      await axios.delete(`/api/core/notes/${noteId}`);
+      onSave();
+      setToast(true);
+      setSuccess("Successfully deleted your note!");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSave = async () => {
     // Prepare the prompt for GPT summarization
     const prompt = `Please briefly summarize the following content:\n\n${editorContent}`;
-    const tags = `Please encapsulate the following content into a maximum of five words\n ${editorContent}`
+    const tagsPrompt = `Please encapsulate the following content into a maximum of five words\n ${editorContent}`;
 
     // Call gpt to summarize the content
     setIsLoading(true);
     setToast(true);
     setSaving("Saving your note...");
     const res = await axios.post("/api/core/chatgpt", { prompt });
-    const tag = `Please encapsulate the folowing contents into a maximum of five words\n ${content}`
-    const tagline = await axios.post('/api/core/chatgpt', { tag });
+    const tagline = await axios.post("/api/core/chatgpt", {
+      prompt: tagsPrompt,
+    });
     const summary = res.data.response.choices[0].message.content;
     const tagus = tagline.data.response.choices[0].message.content;
-
 
     const noteData = {
       title: editorTitle,
@@ -127,7 +141,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
   }, [toast]);
 
   return (
-    <div>
+    <div className={`flex flex-col gap-y-2 ${isLoading ? "opacity-50" : ""}`}>
       <div class="toast toast-top toast-center">
         {Boolean(toast) && Boolean(success) && (
           <div class="alert alert-success">
@@ -140,6 +154,13 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
           </div>
         )}
       </div>
+      <button
+        disabled={isLoading}
+        onClick={handleDelete}
+        className="btn btn-error max-w-[20%]"
+      >
+        <FontAwesomeIcon icon={faTrashCan} /> Delete
+      </button>
       <input
         type="text"
         value={editorTitle}
@@ -149,7 +170,11 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
       />
       <textarea ref={textareaRef} />
       <div className="flex justify-between" role="group">
-        <button onClick={onSave} className="btn btn-error mt-2">
+        <button
+          disabled={isLoading}
+          onClick={onSave}
+          className="btn btn-error mt-2"
+        >
           <FontAwesomeIcon icon={faXmark} />
           Cancel
         </button>
