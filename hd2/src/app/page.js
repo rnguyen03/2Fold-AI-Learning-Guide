@@ -10,6 +10,8 @@ import ThreeSetup from "@/components/three/ThreeSetup";
 import ThreeRabbit from "@/components/three/ThreeRabbit";
 import ThreeTiger from "@/components/three/ThreeTiger";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+
 import {
   faChevronDown,
   faMagnifyingGlass,

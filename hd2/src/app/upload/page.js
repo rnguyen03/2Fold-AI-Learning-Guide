@@ -26,6 +26,7 @@ const UploadPage = () => {
         }
     };
 
+
     const handleButtonClick = () => {
         fileInputRef.current.click();
     };
@@ -135,32 +136,37 @@ const UploadPage = () => {
                         required
                     />
                 </div>
-                <div className="flex justify-center mb-4">
+                        <div className="flex justify-center mb-4 space-x-6">
+                        <div className="tooltip tooltip-bottom" data-tip="Filler text"  style={{ position: 'relative', display: 'inline-block' }}>
+                        <button 
+                                type="button"
+                                onClick={() => handleMarkerClick('Crane')}
+                                className={`btn btn-circle h-16 w-16 ${marker === 'Crane' ? 'btn-primary' : 'neutral-content'}`}>
+                                <img src="/crane_icon.png" alt="Crane Icon" style={{ width: '70px', height: '70px' }} />
+                        </button>
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="Filler text"  style={{ position: 'relative', display: 'inline-block' }}>
                     <button
-                        type="button"
-                        onClick={() => handleMarkerClick('Crane')}
-                        className={`btn mr-2 ${marker === 'Crane' ? 'btn-selected' : ''}`}
-                    >
-                        Crane
+                            type="button"
+                            onClick={() => handleMarkerClick('Ox')}
+                            className={`btn btn-circle h-16 w-16 ${marker === 'Ox' ? 'btn-primary' : 'neutral-content'}`}>
+                            <img src="/ox_icon.png" alt="ix_icon" style={{ width: '70px', height: '70px' }} />
                     </button>
-                    <button
-                        type="button"
-                        onClick={() => handleMarkerClick('Ox')}
-                        className={`btn mr-2 ${marker === 'Ox' ? 'btn-selected' : ''}`}
-                    >
-                        Ox
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => handleMarkerClick('Tiger')}
-                        className={`btn ${marker === 'Tiger' ? 'btn-selected' : ''}`}
-                    >
-                        Tiger
-                    </button>
-                </div>
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="Filler text"  style={{ position: 'relative', display: 'inline-block' }}>
+
+                        <button
+                            type="button"
+                            onClick={() => handleMarkerClick('Tiger')}
+                            className={`btn btn-circle h-16 w-16 ${marker === 'Tiger' ? 'btn-primary' : 'neutral-content'}`}>
+                            <img src="/tiger_icon.png" alt="ix_icon" style={{ width: '70px', height: '70px' }} />
+                        </button>
+                    </div>
+                    </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
         </div>
+
     );
 };
 
