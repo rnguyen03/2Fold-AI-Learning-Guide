@@ -10,6 +10,7 @@ const UploadPage = () => {
     const [fileName, setFileName] = useState('No file chosen');
     const [title, setTitle] = useState('');
     const [marker, setMarker] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const fileInputRef = useRef(null);
     const { data: session } = useSession();
 
@@ -21,6 +22,7 @@ const UploadPage = () => {
             const shortName = name.length > 10 ? name.substring(0, 7) + '...' + extension : name;
             setFileName(shortName);
             setFile(file);
+            setErrorMessage('');
         } else {
             setFileName('No file chosen');
         }
@@ -33,17 +35,24 @@ const UploadPage = () => {
 
     const handleMarkerClick = (selectedMarker) => {
         setMarker(selectedMarker);
+        setErrorMessage('');
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
         if (!file) {
-            alert('Please choose a file to upload.');
+            setErrorMessage('Please choose a file to upload.');
             return;
         }
 
         if (!marker) {
-            alert('Please select a marker.');
+            setErrorMessage('Please select a marker.');
+            return;
+        }
+
+        if (!title.trim()) {
+            setErrorMessage('Please enter a title.');
             return;
         }
 
@@ -95,12 +104,13 @@ const UploadPage = () => {
                 setTitle('');
                 setFile(null);
                 setMarker('');
+                setErrorMessage('');
             };
 
             reader.readAsText(file);
         } catch (error) {
             console.error('Error uploading file:', error);
-            alert('Error uploading file. Please try again.');
+            setErrorMessage('Error uploading file. Please try again.');
         }
     };
 
@@ -152,17 +162,15 @@ const UploadPage = () => {
                             className={`btn btn-circle h-16 w-16 ${marker === 'Ox' ? 'btn-primary' : 'neutral-content'}`}>
                             <img src="/ox_icon.png" alt="ix_icon" style={{ width: '70px', height: '70px' }} />
                     </button>
-                    </div>
-                    <div className="tooltip tooltip-bottom" data-tip="Filler text"  style={{ position: 'relative', display: 'inline-block' }}>
-
-                        <button
-                            type="button"
-                            onClick={() => handleMarkerClick('Tiger')}
-                            className={`btn btn-circle h-16 w-16 ${marker === 'Tiger' ? 'btn-primary' : 'neutral-content'}`}>
-                            <img src="/tiger_icon.png" alt="ix_icon" style={{ width: '70px', height: '70px' }} />
-                        </button>
-                    </div>
-                    </div>
+                    <button
+                        type="button"
+                        onClick={() => handleMarkerClick('Tiger')}
+                        className={`btn ${marker === 'Tiger' ? 'btn-selected' : ''}`}
+                    >
+                        Tiger
+                    </button>
+                </div>
+                {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
         </div>

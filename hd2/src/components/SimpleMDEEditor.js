@@ -25,6 +25,8 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
   const [editorContent, setEditorContent] = useState(content);
   const { data: session } = useSession();
 
+  console.log("Jason Note ID:", noteId);
+
   useEffect(() => {
     setEditorTitle(title);
     setEditorContent(content);
