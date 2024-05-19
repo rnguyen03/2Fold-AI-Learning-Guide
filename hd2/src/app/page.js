@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
@@ -20,6 +20,7 @@ export default function Home() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const cardsRef = useRef(null); // Add a reference to the list of cards
 
   const createQueryString = useCallback(
     (name, value) => {
@@ -92,6 +93,19 @@ export default function Home() {
     }
   };
 
+  const handleScrollToResults = () => {
+    if (cards.length > 0 && cardsRef.current) {
+      cardsRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Scroll to results when cards are updated
+  useEffect(() => {
+    if (cards.length > 0 && cardsRef.current) {
+      cardsRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [cards]);
+
   return (
     <>
       <main className="z-10 flex flex-col gap-y-4 justify-center items-center h-content">
@@ -102,7 +116,7 @@ export default function Home() {
 
         {session?.user ? (
           <form className="form-control basis-2/12 w-[35%]" onSubmit={handleSearchSubmit}>
-            <div className="relative border p-2 rounded-xl">
+            <div className="relative border p-2 rounded-xl flex">
               <input
                 className="w-full pl-2 pr-8 py-2 outline-none"
                 type="text"
@@ -110,10 +124,13 @@ export default function Home() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <FontAwesomeIcon
+              <button
+                type="button"
+                onClick={handleSearchSubmit}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 opacity-70"
-                icon={faMagnifyingGlass}
-              />
+              >
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+              </button>
             </div>
           </form>
         ) : (
@@ -125,13 +142,16 @@ export default function Home() {
           </button>
         )}
 
-        <button className="flex flex-col items-center justify-center w-full basis-2/12 bg-primary text-white font-bold text-lg">
+        <button
+          className="flex flex-col items-center justify-center w-full basis-2/12 bg-primary text-white font-bold text-lg"
+          onClick={handleScrollToResults}
+        >
           <p>Scroll for Results</p>
           <FontAwesomeIcon icon={faChevronDown} />
         </button>
       </main>
 
-      <div className="mt-12 mx-8 max-w-screen-2xl max-h-content" role="group">
+      <div ref={cardsRef} className="mt-12 mx-8 max-w-screen-2xl max-h-content" role="group">
         <ul className="flex gap-x-2 gap-y-2 flex-wrap items-center justify-center overflow-y-auto max-w-screen-2xl rounded-2xl bg-gray-200 px-2 py-4">
           {Array.isArray(cards) && cards.map((card) => (
             <li key={card.id}>
