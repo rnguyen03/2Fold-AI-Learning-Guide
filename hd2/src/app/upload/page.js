@@ -162,15 +162,17 @@ const UploadPage = () => {
                             className={`btn btn-circle h-16 w-16 ${marker === 'Ox' ? 'btn-primary' : 'neutral-content'}`}>
                             <img src="/ox_icon.png" alt="ix_icon" style={{ width: '70px', height: '70px' }} />
                     </button>
-                    <button
-                        type="button"
-                        onClick={() => handleMarkerClick('Tiger')}
-                        className={`btn ${marker === 'Tiger' ? 'btn-selected' : ''}`}
-                    >
-                        Tiger
-                    </button>
-                </div>
-                {errorMessage && <p className="text-red-500 text-center mb-4">{errorMessage}</p>}
+                    </div>
+                    <div className="tooltip tooltip-bottom" data-tip="Filler text"  style={{ position: 'relative', display: 'inline-block' }}>
+
+                        <button
+                            type="button"
+                            onClick={() => handleMarkerClick('Tiger')}
+                            className={`btn btn-circle h-16 w-16 ${marker === 'Tiger' ? 'btn-primary' : 'neutral-content'}`}>
+                            <img src="/tiger_icon.png" alt="ix_icon" style={{ width: '70px', height: '70px' }} />
+                        </button>
+                    </div>
+                    </div>
                 <button type="submit" className="btn btn-primary">Submit</button>
             </form>
         </div>
