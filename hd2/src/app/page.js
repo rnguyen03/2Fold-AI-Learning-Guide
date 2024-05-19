@@ -6,7 +6,10 @@ import { signIn, useSession } from "next-auth/react";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { DB } from "@/app/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronDown, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronDown,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import ThreeSetup from "@/components/three/ThreeSetup";
 import ThreeRabbit from "@/components/three/ThreeRabbit";
 import Image from "next/image";
@@ -57,24 +60,26 @@ export default function Home() {
 
   const handleViewMoreClick = async (noteId) => {
     try {
-      await axios.post('/api/core/notes/toCollection', { noteId });
-      router.push(`/notes?noteId=${ noteId }`);
+      await axios.post("/api/core/notes/toCollection", { noteId });
+      router.push(`/notes?noteId=${noteId}`);
       for (const noteId of res.data) {
-          const trimmedNoteId = noteId.trim();
-          const noteDoc = await getDoc(doc(DB, "notes", trimmedNoteId));
-          if (noteDoc.exists()) {
-              similarNotes.push({
-                  id: noteDoc.id,
-                  ...noteDoc.data(),
-              });
-          }
+        const trimmedNoteId = noteId.trim();
+        const noteDoc = await getDoc(doc(DB, "notes", trimmedNoteId));
+        if (noteDoc.exists()) {
+          similarNotes.push({
+            id: noteDoc.id,
+            ...noteDoc.data(),
+          });
+        }
       }
 
       console.log("Similar notes:", similarNotes);
 
       let fetchedCards = similarNotes;
       if (fetchedCards.length < 5) {
-        const additionalCards = await fetchAdditionalCards(5 - fetchedCards.length);
+        const additionalCards = await fetchAdditionalCards(
+          5 - fetchedCards.length
+        );
         fetchedCards = fetchedCards.concat(additionalCards); // Append additional cards
       }
 
@@ -92,28 +97,30 @@ export default function Home() {
     setIsLoading(true);
     try {
       router.push(pathname + "?" + createQueryString("q", searchQuery));
-      const res = await axios.post('/api/core/explore', { searchQuery });
+      const res = await axios.post("/api/core/explore", { searchQuery });
 
       // Fetch full details of each similar note
       const similarNotes = [];
       console.log("Similar notes:", res.data);
 
       for (const noteId of res.data) {
-          const trimmedNoteId = noteId.trim();
-          const noteDoc = await getDoc(doc(DB, "notes", trimmedNoteId));
-          if (noteDoc.exists()) {
-              similarNotes.push({
-                  id: noteDoc.id,
-                  ...noteDoc.data(),
-              });
-          }
+        const trimmedNoteId = noteId.trim();
+        const noteDoc = await getDoc(doc(DB, "notes", trimmedNoteId));
+        if (noteDoc.exists()) {
+          similarNotes.push({
+            id: noteDoc.id,
+            ...noteDoc.data(),
+          });
+        }
       }
 
       console.log("Similar notes:", similarNotes);
 
       let fetchedCards = similarNotes;
       if (fetchedCards.length < 5) {
-        const additionalCards = await fetchAdditionalCards(5 - fetchedCards.length);
+        const additionalCards = await fetchAdditionalCards(
+          5 - fetchedCards.length
+        );
         fetchedCards = fetchedCards.concat(additionalCards); // Append additional cards
       }
 
@@ -141,13 +148,19 @@ export default function Home() {
   return (
     <>
       <main className="z-10 flex flex-col gap-y-4 justify-center items-center h-content">
-        <div className="z-20" style={{ position: "relative", width: "100%", height: "100%" }}>
+        <div
+          className="z-20"
+          style={{ position: "relative", width: "100%", height: "100%" }}
+        >
           <ThreeRabbit />
           <ThreeSetup />
         </div>
 
         {session?.user ? (
-          <form className="form-control basis-2/12 w-[35%]" onSubmit={handleSearchSubmit}>
+          <form
+            className="form-control basis-2/12 w-[35%]"
+            onSubmit={handleSearchSubmit}
+          >
             <div className="relative border p-2 rounded-xl flex">
               <input
                 className="w-full pl-2 pr-8 py-2 outline-none"
@@ -183,29 +196,39 @@ export default function Home() {
         </button>
       </main>
 
-      <div ref={cardsRef} className="mt-12 mx-8 max-w-screen-2xl max-h-content" role="group">
-        <ul className="flex gap-x-2 gap-y-2 flex-wrap items-center justify-center overflow-y-auto max-w-screen-2xl rounded-2xl bg-gray-200 px-2 py-4">
-          {Array.isArray(cards) && cards.map((card) => (
-            <li key={card.id}>
-              <div className="card w-72 bg-base-100 shadow-xl">
-                <figure className="p-2 border-4 border-gray-300">
-                  <Image
-                    src={markerToImageMap[card.marker] || "/tiger.png"} // Use the marker-to-image map
-                    alt={card.title}
-                    width={1000}
-                    height={1000}
-                  />
-                </figure>
-                <div className="card-body">
-                  <h2 className="card-title">{card.title}</h2>
-                  <p>{card.summary}</p>
-                  <div className="card-actions justify-end">
-                    <button className="btn btn-primary" onClick={() => handleViewMoreClick(card.id)}>View More</button>
+      <div
+        ref={cardsRef}
+        className="mt-12 mx-8 max-w-screen-2xl max-h-content"
+        role="group"
+      >
+        <ul className="flex gap-x-2 gap-y-2 flex-wrap items-center justify-center overflow-y-auto max-w-screen-2xl rounded-2xl bg-base-200 px-2 py-4">
+          {Array.isArray(cards) &&
+            cards.map((card) => (
+              <li key={card.id}>
+                <div className="card w-72 bg-base-100 shadow-xl">
+                  <figure className="p-2">
+                    <Image
+                      src={markerToImageMap[card.marker] || "/tiger.png"} // Use the marker-to-image map
+                      alt={card.title}
+                      width={1000}
+                      height={1000}
+                    />
+                  </figure>
+                  <div className="card-body">
+                    <h2 className="card-title">{card.title}</h2>
+                    <p>{card.summary}</p>
+                    <div className="card-actions justify-end">
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleViewMoreClick(card.id)}
+                      >
+                        View More
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </li>
-          ))}
+              </li>
+            ))}
         </ul>
       </div>
     </>
