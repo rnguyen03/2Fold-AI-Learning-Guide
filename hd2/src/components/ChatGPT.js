@@ -48,9 +48,12 @@ export default function ChatGPT() {
 
     try {
       setIsLoading(true);
-      const res = await finalizePrompt('You are interacting with the user. Do not explicitly mention the database or this conversation, and keep messages to a maximum of three sentences before asking the user for another prompt ' + prompt);
+      const res = await finalizePrompt(
+        "You are interacting with the user. Do not explicitly mention the database or this conversation, and keep messages to a maximum of three sentences before asking the user for another prompt " +
+          prompt
+      );
       const message = {
-        response: res.data.response.choices[0].message.content,
+        response: res,
         prompt,
       };
 
