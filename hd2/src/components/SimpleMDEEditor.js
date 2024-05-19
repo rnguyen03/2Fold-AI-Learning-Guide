@@ -59,6 +59,7 @@ const SimpleMDEEditor = ({ noteId, title, content, onSave }) => {
   const handleSave = async () => {
     // Prepare the prompt for GPT summarization
     const prompt = `Please briefly summarize the following content:\n\n${editorContent}`;
+    const tags = `Please encapsulate the following content into a maximum of five words\n ${editorContent}`
 
     // Call gpt to summarize the content
     const res = await axios.post("/api/core/chatgpt", { prompt });

@@ -41,7 +41,7 @@ const finalizePrompt = async (message) => {
       "Mouse": []
     };
 
-    let prompt = "You will learn about the knowledge structure of the user. Based on this, try to construct a reasonable way to respond to the request of the user outlined as the last task.\n";
+    let prompt = "Answer the prompt as if you were speaking to the user.You will learn about the knowledge structure of the user. Based on this, try to construct a reasonable way to respond to the request of the user outlined as the last task. You may adjust the formality accordingly, based on how many notes they are familiar with or not. Ultimately, do not exceed a paragraph in length, or 300 words.\n";
     const tags = Object.keys(animalarray);
 
     for (const tag of tags) {
