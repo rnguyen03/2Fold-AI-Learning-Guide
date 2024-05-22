@@ -1,4 +1,5 @@
 # 2Fold - A Learning Guidance Tool
+#### This tool was a HawkHacks 2024 submission.
 [![Query Gif]()
 
 ## App
