@@ -1,4 +1,4 @@
-# 2Fold
+# 2Fold - A Learning Guidance Tool
 [![Query Gif]()
 
 ## App
