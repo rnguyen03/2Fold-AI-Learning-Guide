@@ -4,6 +4,7 @@
 ## App
 An app that guides user learning through the use of AI. The lastest stable version of the app can be tested [here](https://hd2.vercel.app/).
 
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Features
 - Suggests notes based on user needs.
@@ -11,9 +12,6 @@ An app that guides user learning through the use of AI. The lastest stable versi
 - Personal note library and editor.
 - In line/In context chatbot for note reading and editing.
 - Uses markers and tags to specify and customize chat-bot experience for the user.
-
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
