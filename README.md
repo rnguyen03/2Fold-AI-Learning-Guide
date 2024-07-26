@@ -7,32 +7,26 @@ An app that guides user learning through the use of AI. The lastest stable versi
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Description
+
+Information, while sometimes fleeting, comes in many forms. Curiosity, a natural attractor of that information carries a unique importance-- especially so in the age of technology that can easily rob humanity of it. 
+
+Notes act as a helpful, yet static reference for the information they hold when they were created; they reflect many aspects of the author themselves that become lost in the context of schools or courses. 2Fold aims to capitalize on this information by granting its users levers of control to systematically approach conceptual learning, but also allows those levers to dictate how they may branch off and explore new and enriching ideas. 
+
+While the creators of 2Fold would like to hail it as an 'all enclosed ever-evolving reference', it is ultimately, at its core, a fancy note editor. However, it aims to encompass a user's entire learning workflow by offering information storage solutions at every step along the way: from idea curation to note creation to concept abstraction, 2Fold tries to ensure that you don't leave our app. 
+
+2Fold tries to tackle concept abstraction by giving users control instead of assigning them to a rigid curriculum. Users may mark certain notes as 'supported' by a certain companion, meaning that those notes play a specific role in the user's note database. For example notes supported by the Crane represent 'curriculum concepts'-- notes that the user has received formal training with, but not enough so to branch off and explore deeper. As such, users are able to programmatically map out their notes as a reflection of their minds.
+
+
+
+2Fold is built with Jeremy.js, Vercel Next, Fireabase, ThreeJs, Blender, Figma, Tailwind and OpenAi. 
+
 ## Features
 - Suggests notes based on user needs.
 - Explains concepts in a way that the user understands.
 - Personal note library and editor.
 - In line/In context chatbot for note reading and editing.
 - Uses markers and tags to specify and customize chat-bot experience for the user.
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
 ## Learn More
 
