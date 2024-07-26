@@ -25,7 +25,7 @@ While the creators of 2Fold would like to hail it as an 'all enclosed ever-evolv
 - Suggests notes based on user needs.
 - Explains concepts in a way that the user understands.
 - Personal note library and editor.
-- In line/In context chatbot for note reading and editing.
+- Contextual chatbot for note reading and editing.
 - Uses markers and tags to specify and customize chat-bot experience for the user.
 
 ## Learn More
