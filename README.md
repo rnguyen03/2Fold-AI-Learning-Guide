@@ -1,6 +1,6 @@
 # 2Fold - A Learning Guidance Tool
 #### This tool was a HawkHacks 2024 submission.
-[![https://hd2.vercel.app/](https://github.com/rnguyen03/2Fold-AI-Learning-Guide/blob/main/2Fold.gif)
+[![2Fold Homepage](https://github.com/rnguyen03/2Fold-AI-Learning-Guide/blob/main/2Fold.gif)](hd2.vercel.app/launch)
 
 ## App
 An app that guides user learning through the use of AI. The lastest stable version of the app can be tested [here](https://hd2.vercel.app/).
